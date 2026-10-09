@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BD Bank Details Parser & Routing Number Finder | বাংলাদেশ ব্যাংক রাউটিং ও অ্যাকাউন্ট পার্সার</title>
+  <meta name="description" content="কাস্টমারের মেসেজ থেকে ব্যাংক নাম, অ্যাকাউন্ট নম্বর, নাম ও ব্রাঞ্চ আলাদা করুন এবং স্বয়ংক্রিয়ভাবে রাউটিং নম্বর বের করে এক ক্লিকে কপি করুন।">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  
+  <!-- PWA & Mobile Web App Meta -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0ea5e9">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BD Routing">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+  <!-- Toast notification container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo-group">
+        <div class="logo-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="app-title">Bank Details & Routing Finder</h1>
+          <p class="app-subtitle">বাংলাদেশ ব্যাংক রাউটিং ও অ্যাকাউন্ট ইনফো এক্সট্রাক্টর</p>
+        </div>
+      </div>
+
+      <div class="header-badges">
+        <span class="badge badge-success">
+          <span class="pulse-dot"></span>
+          ১০০% অফলাইন ও নিরাপদ
+        </span>
+        <span class="badge badge-info" id="db-status-badge">
+          🏦 ৬৩+ ব্যাংক • ১১,৪০০+ ব্রাঞ্চ
+        </span>
+        <button id="btn-install-pwa" class="btn btn-install btn-sm hidden" title="আপনার ডিভাইস বা ফোনে অ্যাপ ডাউনলোড / ইনস্টল করুন">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span id="install-btn-text">📲 অ্যাপ ইনস্টল</span>
+        </button>
+        <button id="btn-open-ai-settings" class="btn btn-secondary btn-sm ai-settings-header-btn" title="Google Gemini AI সেটিংস">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+          <span id="header-ai-status-text">Gemini AI</span>
+        </button>
+        <button id="theme-toggle" class="btn-icon" title="ডার্ক/লাইট থিম পরিবর্তন করুন" aria-label="Toggle theme">
+          <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Navigation Tabs -->
+  <main class="app-main">
+    <div class="tabs-nav">
+      <button class="tab-btn active" data-tab="parser-tab" id="tab-btn-parser">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        মেসেজ পার্সার ও অটোরুটিয়ান
+      </button>
+      <button class="tab-btn" data-tab="lookup-tab" id="tab-btn-lookup">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        সরাসরি ব্রাঞ্চ / রাউটিং সার্চ
+      </button>
+      <button class="tab-btn" data-tab="history-tab" id="tab-btn-history">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        পূর্ববর্তী হিস্টোরি <span class="history-count-badge" id="history-badge">০</span>
+      </button>
+    </div>
+
+    <!-- TAB 1: Smart Parser -->
+    <div class="tab-content active" id="parser-tab">
+      <div class="two-column-layout">
+        
+        <!-- Left: Input Box -->
+        <section class="card input-card">
+          <div class="card-header">
+            <div class="header-title-box">
+              <span class="step-num">১</span>
+              <div>
+                <h2>কাস্টমারের মেসেজ পেস্ট করুন</h2>
+                <p class="section-desc">যেকোনো ফরমেটে লেখা মেসেজ এখানে পেস্ট করলেই অটোমেটিক আলাদা হবে</p>
+              </div>
+            </div>
+            <div class="quick-paste-box">
+              <button id="btn-paste-clipboard" class="btn btn-secondary btn-sm" title="ক্লিপবোর্ড থেকে সরাসরি পেস্ট করুন">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                ক্লিপবোর্ড থেকে পেস্ট
+              </button>
+              <button id="btn-clear" class="btn btn-ghost btn-sm" title="ইনপুট বক্স পরিষ্কার করুন">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                মুছুন
+              </button>
+            </div>
+          </div>
+
+          <div class="textarea-wrapper">
+            <textarea 
+              id="raw-message-input" 
+              class="message-textarea" 
+              placeholder="এখানে কাস্টমারের মেসেজ পেস্ট করুন...&#10;&#10;উদাহরণ:&#10;PUBALI BANK PLC&#10;Acc -- 0191101226904&#10;Md. Shakib Hasan&#10;Joypurhat Branch"
+              rows="9"
+              spellcheck="false"
+            ></textarea>
+            <div class="textarea-footer">
+              <label class="checkbox-label">
+                <input type="checkbox" id="auto-parse-toggle" checked>
+                <span>পেস্ট করার সাথে সাথে অটো-পার্স করুন</span>
+              </label>
+              <span class="char-count" id="input-stats">০ অক্ষর • ০ লাইন</span>
+            </div>
+          </div>
+
+          <!-- Sample Messages for quick testing -->
+          <div class="sample-pills-container">
+            <span class="sample-label">নমুনা টেস্ট করুন:</span>
+            <div class="sample-pills">
+              <button class="pill-btn" data-sample="pubali-joypurhat">
+                🏦 পূবালী (জয়পুরহাট)
+              </button>
+              <button class="pill-btn" data-sample="pubali-parbotipur">
+                🏦 পূবালী (পার্বতীপুর)
+              </button>
+              <button class="pill-btn" data-sample="dbbl-ashulia">
+                🏦 ডিবিবিএল (আশুলিয়া - একই লাইন)
+              </button>
+              <button class="pill-btn" data-sample="ibbl-guptachara">
+                🏦 ইসলামী ব্যাংক (গুপ্তছড়া + ১০০k)
+              </button>
+              <button class="pill-btn" data-sample="ucb-amount">
+                🏦 ইউসিবি ব্যাংক (রিফাত + ২০০০ BDT)
+              </button>
+              <button class="pill-btn" data-sample="brac-sarker">
+                🏦 ব্র্যাক ব্যাংক (সারকার টেলিকম)
+              </button>
+              <button class="pill-btn" data-sample="prime-feni">
+                🏦 প্রাইম ব্যাংক (ফেনী)
+              </button>
+              <button class="pill-btn" data-sample="dbbl-agent">
+                🏦 ডিবিবিএল এজেন্ট (বুড়িচং)
+              </button>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-bar-dual">
+            <button id="btn-parse" class="btn btn-primary btn-large">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              <span>সাধারণ পার্স (Offline)</span>
+              <kbd class="shortcut-kbd">Ctrl+Enter</kbd>
+            </button>
+            <button id="btn-parse-ai" class="btn btn-ai btn-large" title="Google Gemini AI দিয়ে জটিল মেসেজ স্বয়ংক্রিয়ভাবে পার্স করুন">
+              <svg class="ai-sparkle-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+              <span>✨ Gemini AI দিয়ে পার্স</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Right: Parsed Output Cards -->
+        <section class="card output-card">
+          <div class="card-header">
+            <div class="header-title-box">
+              <span class="step-num step-num-done">২</span>
+              <div>
+                <h2>আলাদা করা ব্যাংকিং ডিটেইলস</h2>
+                <p class="section-desc">যেকোনো তথ্যে ক্লিক করলেই ১-ক্লিকে কপি হয়ে যাবে</p>
+              </div>
+            </div>
+            
+            <div class="output-header-actions" id="parsed-status-box">
+              <span class="badge badge-waiting" id="parser-status-tag">ইনপুটের অপেক্ষায়</span>
+            </div>
+          </div>
+
+          <!-- Empty State (Shown when no text parsed) -->
+          <div id="empty-state" class="empty-state">
+            <div class="empty-illustration">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="5" width="20" height="14" rx="2"/>
+                <line x1="2" y1="10" x2="22" y2="10"/>
+              </svg>
+            </div>
+            <h3>এখনো কোনো মেসেজ পার্স করা হয়নি</h3>
+            <p>বামে কাস্টমারের পাঠানো মেসেজ পেস্ট করুন অথবা যেকোনো নমুনায় ক্লিক করুন। সাথে সাথে নাম, ব্যাংক, অ্যাকাউন্ট, ব্রাঞ্চ এবং রাউটিং নম্বর পৃথক হয়ে যাবে।</p>
+          </div>
+
+          <!-- Result Content (Shown after parsing) -->
+          <div id="result-view" class="result-view hidden">
+            
+            <!-- Routing Number Featured Box -->
+            <div class="routing-featured-box" id="routing-featured-card">
+              <div class="routing-box-header">
+                <div class="routing-label-group">
+                  <span class="featured-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    রাউটিং নম্বর (Routing Number)
+                  </span>
+                  <span class="badge" id="routing-source-badge">অটো-ডিটেক্টেড ✓</span>
+                </div>
+                <button class="btn btn-copy btn-copy-hero" id="copy-btn-routing" data-copy-target="field-routing" title="রাউটিং নম্বর কপি করুন">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  <span>কপি করুন</span>
+                </button>
+              </div>
+
+              <div class="routing-digits-display">
+                <span class="routing-large-text" id="display-routing-number">---------</span>
+              </div>
+
+              <div class="routing-breakdown" id="routing-breakdown">
+                <div class="breakdown-part">
+                  <span class="bd-code" id="bd-bank-code">---</span>
+                  <span class="bd-label">ব্যাংক কোড</span>
+                </div>
+                <div class="breakdown-sep">+</div>
+                <div class="breakdown-part">
+                  <span class="bd-code" id="bd-dist-code">--</span>
+                  <span class="bd-label">জেলা কোড</span>
+                </div>
+                <div class="breakdown-sep">+</div>
+                <div class="breakdown-part">
+                  <span class="bd-code" id="bd-branch-code">---</span>
+                  <span class="bd-label">শাখা কোড</span>
+                </div>
+                <div class="breakdown-sep">+</div>
+                <div class="breakdown-part">
+                  <span class="bd-code" id="bd-check-digit">-</span>
+                  <span class="bd-label">চেক ডিজিট</span>
+                </div>
+              </div>
+
+              <!-- Multiple Candidates Switcher (if needed) -->
+              <div id="branch-candidates-box" class="candidates-box hidden">
+                <span class="candidates-label">অন্যান্য সম্ভাব্য ব্রাঞ্চ:</span>
+                <div id="candidates-pills" class="candidates-list"></div>
+              </div>
+            </div>
+
+            <!-- Detailed Fields Grid -->
+            <div class="fields-grid">
+
+              <!-- Field 1: Account Holder Name -->
+              <div class="field-card" id="card-name">
+                <div class="field-header">
+                  <span class="field-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    হিসাবধারীর নাম (Account Title / Name)
+                  </span>
+                  <button class="btn btn-copy btn-sm" data-copy-target="field-name" title="নাম কপি করুন">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    <span>কপি</span>
+                  </button>
+                </div>
+                <div class="field-body">
+                  <input type="text" id="field-name" class="field-input" placeholder="নাম পাওয়া যায়নি">
+                </div>
+              </div>
+
+              <!-- Field 2: Bank Name -->
+              <div class="field-card" id="card-bank">
+                <div class="field-header">
+                  <span class="field-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    ব্যাংকের নাম (Bank Name)
+                  </span>
+                  <button class="btn btn-copy btn-sm" data-copy-target="field-bank" title="ব্যাংকের নাম কপি করুন">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    <span>কপি</span>
+                  </button>
+                </div>
+                <div class="field-body">
+                  <input type="text" id="field-bank" class="field-input" placeholder="ব্যাংকের নাম পাওয়া যায়নি">
+                  <span class="field-extra-badge" id="bank-code-badge">কোড: ---</span>
+                </div>
+              </div>
+
+              <!-- Field 3: Account Number -->
+              <div class="field-card" id="card-acc">
+                <div class="field-header">
+                  <span class="field-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    অ্যাকাউন্ট নম্বর (Account Number)
+                  </span>
+                  <button class="btn btn-copy btn-sm" data-copy-target="field-acc" title="অ্যাকাউন্ট নম্বর কপি করুন">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    <span>কপি</span>
+                  </button>
+                </div>
+                <div class="field-body">
+                  <input type="text" id="field-acc" class="field-input font-mono" placeholder="অ্যাকাউন্ট নম্বর পাওয়া যায়নি">
+                  <span class="field-extra-badge" id="acc-len-badge">০ ডিজিট</span>
+                </div>
+              </div>
+
+              <!-- Field 4: Branch Name -->
+              <div class="field-card" id="card-branch">
+                <div class="field-header">
+                  <span class="field-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                    ব্রাঞ্চের নাম (Branch Name)
+                  </span>
+                  <button class="btn btn-copy btn-sm" data-copy-target="field-branch" title="ব্রাঞ্চ কপি করুন">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    <span>কপি</span>
+                  </button>
+                </div>
+                <div class="field-body">
+                  <input type="text" id="field-branch" class="field-input" placeholder="ব্রাঞ্চের নাম পাওয়া যায়নি">
+                  <span class="field-extra-badge" id="branch-dist-badge">জেলা: ---</span>
+                </div>
+              </div>
+
+              <!-- Hidden input for routing copy target -->
+              <input type="hidden" id="field-routing" value="">
+
+            </div>
+
+            <!-- Bottom Unified Copy Bar -->
+            <div class="unified-copy-bar">
+              <div class="copy-formats">
+                <span class="formats-label">কপি ফরম্যাট:</span>
+                <label class="radio-chip">
+                  <input type="radio" name="copy-format" value="beftn" checked>
+                  <span>ব্যাংক ট্র্যান্সফার ফরম্যাট (BEFTN / NPSB)</span>
+                </label>
+                <label class="radio-chip">
+                  <input type="radio" name="copy-format" value="bangla">
+                  <span>বাংলা বিস্তারিত</span>
+                </label>
+                <label class="radio-chip">
+                  <input type="radio" name="copy-format" value="table">
+                  <span>এক্সেল / সিঙ্গল লাইন</span>
+                </label>
+              </div>
+
+              <div class="unified-buttons">
+                <button id="btn-copy-all" class="btn btn-success btn-large">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  <span>সমস্ত তথ্য একসাথে কপি করুন</span>
+                </button>
+                <button id="btn-save-history" class="btn btn-secondary btn-large" title="এই তথ্য হিস্টোরিতে সংরক্ষণ করুন">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                  <span>সংরক্ষণ</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: Direct Search / Routing Directory -->
+    <div class="tab-content" id="lookup-tab">
+      <div class="card full-width-card">
+        <div class="card-header">
+          <div class="header-title-box">
+            <span class="step-num">🔍</span>
+            <div>
+              <h2>বাংলাদেশ ব্যাংক রাউটিং নম্বর ডিরেক্টরি</h2>
+              <p class="section-desc">ব্যাংক ও ব্রাঞ্চ সিলেক্ট করে বা রাউটিং নম্বর লিখে তাৎক্ষণিক অনুসন্ধান করুন</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="search-controls-grid">
+          <div class="form-group">
+            <label for="search-bank-select">ব্যাংক নির্বাচন করুন:</label>
+            <select id="search-bank-select" class="form-select">
+              <option value="">-- সকল ব্যাংক (৬৩টি প্রতিষ্ঠান) --</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="search-district-select">জেলা ফিল্টার (ঐচ্ছিক):</label>
+            <select id="search-district-select" class="form-select">
+              <option value="">-- সকল জেলা (৬৪টি জেলা) --</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="search-query-input">ব্রাঞ্চের নাম বা রাউটিং নম্বর দিয়ে খুঁজুন:</label>
+            <div class="search-input-wrapper">
+              <input type="text" id="search-query-input" class="form-input" placeholder="যেমন: Joypurhat, Agrabad, 175380400...">
+              <button id="search-clear-btn" class="search-clear-btn hidden">&times;</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="search-results-meta">
+          <span id="search-results-count">ফলাফল লোড হচ্ছে...</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table" id="branches-table">
+            <thead>
+              <tr>
+                <th>রাউটিং নম্বর</th>
+                <th>ব্যাংকের নাম</th>
+                <th>ব্রাঞ্চের নাম</th>
+                <th>জেলা</th>
+                <th>অ্যাকশন</th>
+              </tr>
+            </thead>
+            <tbody id="branches-table-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: History -->
+    <div class="tab-content" id="history-tab">
+      <div class="card full-width-card">
+        <div class="card-header">
+          <div class="header-title-box">
+            <span class="step-num">📋</span>
+            <div>
+              <h2>পূর্বে পার্স করা গ্রাহকের তালিকা</h2>
+              <p class="section-desc">আপনার ব্রাউজারে সংরক্ষিত সাম্প্রতিক হিসাবসমূহ</p>
+            </div>
+          </div>
+          <button id="btn-clear-history" class="btn btn-ghost btn-sm">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            সব হিস্টোরি মুছুন
+          </button>
+        </div>
+
+        <div id="history-empty" class="empty-state">
+          <h3>কোনো হিস্টোরি পাওয়া যায়নি</h3>
+          <p>মেসেজ পার্স করে সংরক্ষণ করলেই তা এখানে তালিকাভুক্ত থাকবে।</p>
+        </div>
+
+        <div id="history-list" class="history-grid hidden">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p>© ২০২৬ BD Bank Routing Finder • সর্বস্বত্ব সংরক্ষিত • দ্রুত, নির্ভুল এবং ১০০% ক্লায়েন্ট-সাইড প্রসেসিং</p>
+      <p class="footer-note">সোর্স: বাংলাদেশ ব্যাংক ও ব্যাচ (BACH) রাউটিং সিস্টেম ডেটাবেজ</p>
+    </div>
+  </footer>
+
+  <!-- Gemini AI API Key Modal Dialog -->
+  <div id="ai-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="ai-modal-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div class="ai-modal-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+          </div>
+          <div>
+            <h3 id="ai-modal-title">Google Gemini Free API Key</h3>
+            <p class="modal-subtitle">AI দিয়ে যেকোনো জটিল মেসেজ থেকে নির্ভুল তথ্য বের করুন</p>
+          </div>
+        </div>
+        <button id="ai-modal-close" class="modal-close-btn" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="ai-api-key-input">আপনার Gemini API Key:</label>
+          <div class="input-password-wrapper">
+            <input type="password" id="ai-api-key-input" class="form-input font-mono" placeholder="AIzaSy...">
+            <button id="ai-key-toggle-visibility" type="button" class="btn-toggle-eye" title="দেখুন/লুকান">👁️</button>
+          </div>
+          <div class="api-key-help">
+            <div class="shield-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span>আপনার API Key ১০০% নিরাপদ, কেবল আপনার ব্রাউজারের লোকালেই সংরক্ষিত থাকে।</span>
+            </div>
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="link-get-key">
+              🔗 গুগল এআই স্টুডিও থেকে ফ্রি API Key নিন (সম্পূর্ণ ফ্রি) &rarr;
+            </a>
+          </div>
+        </div>
+
+        <div class="form-group checkbox-group-box">
+          <label class="checkbox-label">
+            <input type="checkbox" id="ai-auto-use-toggle">
+            <span>মেসেজ পেস্ট বা লোড করলে স্বয়ংক্রিয়ভাবে Gemini AI ব্যবহার করুন</span>
+          </label>
+        </div>
+
+        <div class="api-status-display" id="api-status-display">
+          <span class="badge badge-waiting" id="api-status-pill">কোনো API Key সেট করা নেই</span>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="btn-remove-api-key" class="btn btn-ghost btn-sm text-danger">কী মুছে ফেলুন</button>
+        <div class="modal-footer-actions">
+          <button id="btn-cancel-ai-modal" class="btn btn-secondary">বাতিল</button>
+          <button id="btn-save-api-key" class="btn btn-primary">সংরক্ষণ করুন</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="banks-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

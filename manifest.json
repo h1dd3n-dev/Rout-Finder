@@ -1,0 +1,30 @@
+{
+  "name": "BD Bank Routing Finder & Details Parser",
+  "short_name": "BD Routing",
+  "description": "বাংলাদেশ ব্যাংক রাউটিং ও অ্যাকাউন্ট ইনফো এক্সট্রাক্টর — ১০০% অফলাইন ও ক্যাশড",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#070c17",
+  "theme_color": "#0ea5e9",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
