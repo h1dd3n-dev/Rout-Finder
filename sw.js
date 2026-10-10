@@ -3,7 +3,7 @@
  * 100% Offline Cache & Offline PWA System
  */
 
-const CACHE_NAME = 'bd-routing-v9';
+const CACHE_NAME = 'bd-routing-v10';
 
 const STATIC_ASSETS = [
   './',
