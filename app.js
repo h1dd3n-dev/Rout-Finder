@@ -1259,41 +1259,7 @@ RULES:
       }
     });
 
-    // Comprehensive Sample Messages
-    const sampleMessages = {
-      'pubali-joypurhat': `PUBALI BANK PLC \n\nAcc -- 0191101226904\n\nMd. Shakib Hasan\n\nJoypurhat Branch`,
-      
-      'pubali-parbotipur': `Pubali Bank 🏦 \nAccount Number\n1510101200027\nAccount Title\nMd. Nakib Arshad\nBranch Name\nPARBOTIPUR BRANCH`,
-      
-      'dbbl-ashulia': `DBBL  2161030966332\n\nSawrov Mazumder \nBranch Dhaka North Ashulia`,
-      
-      'ibbl-guptachara': `'MOHAMMED MOIN UDDIN\nNo.20508370200078406   Guptachara Bazar Branch\ndistrict CHITTAGONG \nThana Sandwip\n\nIbbl\n100k'`,
-      
-      'ucb-amount': `UCB BANK LIMITED \n-\nName/- RIFAT AHMED\nAC/- 7502141000300159\nBranch/- Mymensingh \n\nminimum 2000 BDT⚠️`,
-      
-      'brac-sarker': `BRAC BANK PLC\nAC NO : 2071164560001\nAC NAME : SARKER TELECOM\nDISTRICT : DHAKA NORTH \nBRANCH : ASHULIA`,
-      
-      'prime-feni': `New prime bank ✅\nName: Shaon Uddin\nAccount: 3136214025769\nDist & Branch : Feni`,
-      
-      'dbbl-agent': `'Acc name : Panshi Express\nAcc no: 1941100232969\nRouting no: 090270608\nBank name: Dutch Bangla\nBranch: Burichang'`,
 
-      'ibbl-shilpi': `IBBL bank\nSHILPI AKTER\n20507770205294224\n63900 Tk`
-    };
-
-    document.querySelectorAll('.pill-btn').forEach(pill => {
-      pill.addEventListener('click', () => {
-        const sampleKey = pill.getAttribute('data-sample');
-        if (sampleMessages[sampleKey]) {
-          rawInput.value = sampleMessages[sampleKey];
-          rawInput.dispatchEvent(new Event('input'));
-          if (geminiAutoUse && geminiApiKey) {
-            btnParseAi.click();
-          } else {
-            btnParse.click();
-          }
-        }
-      });
-    });
 
     // Copy single fields
     document.querySelectorAll('.btn-copy').forEach(btn => {
