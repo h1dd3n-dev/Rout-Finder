@@ -449,46 +449,7 @@ body.light-theme .moon-icon { display: block; }
   cursor: pointer;
 }
 
-/* Sample Pills */
-.sample-pills-container {
-  margin-bottom: 1.25rem;
-}
 
-.sample-label {
-  display: block;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 0.4rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.sample-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-}
-
-.pill-btn {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
-  font-family: var(--font-sans);
-  font-size: 0.8rem;
-  padding: 0.35rem 0.75rem;
-  border-radius: 9999px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.pill-btn:hover {
-  background: rgba(14, 165, 233, 0.12);
-  color: var(--text-primary);
-  border-color: var(--accent-cyan);
-  transform: translateY(-1px);
-}
 
 /* Buttons */
 .btn {
@@ -779,6 +740,47 @@ body.light-theme .routing-breakdown {
   border-color: var(--accent-emerald);
   background: rgba(16, 185, 129, 0.2);
   color: #34d399;
+}
+
+/* External Tools / BanksBD Lookup */
+.routing-external-tools {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.external-tools-label {
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.btn-banksbd-lookup {
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(14, 165, 233, 0.35);
+  color: #38bdf8;
+  font-size: 0.8rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-banksbd-lookup:hover {
+  background: rgba(14, 165, 233, 0.25);
+  border-color: #38bdf8;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
 }
 
 /* Fields Grid */
