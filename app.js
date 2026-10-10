@@ -144,11 +144,14 @@
 
   function isUnwantedText(line) {
     const l = line.trim().toLowerCase();
-    if (!l || l === '-' || l === '--' || l === '---' || l === '.') return true;
-    if (/^(minimum|min|maximum|max|limit)\s*[:\-\s]*\d+/i.test(l)) return true;
-    if (/^\d+(\.\d+)?\s*(k|bdt|tk|taka|টাকা|হাজার|lakh|lac|cr)$/i.test(l)) return true;
+    if (!l || l === '-' || l === '--' || l === '---' || l === '.' || l === '/' || l === '//') return true;
+    if (/^(minimum|min|maximum|max|limit|amount|amt|টাকার পরিমাণ|টাকা|পরিমাণ)\s*[:\-\s]*[\d,]+/i.test(l)) return true;
+    if (/^(bdt|tk|tk\.|taka|টাকা)\s*[:\-\s]*[\d,]+(\.\d+)?/i.test(l)) return true;
+    if (/^[\d,]+(\.\d+)?\s*(\/\-|\/=)?\s*(k|bdt|tk|tk\.|taka|টাকা|টাকার|হাজার|lakh|lac|cr)\b/i.test(l)) return true;
+    if (/^\d+(\.\d+)?\s*(k|bdt|tk|tk\.|taka|টাকা|হাজার|lakh|lac|cr)$/i.test(l)) return true;
     if (/^\d+\s*k$/i.test(l)) return true;
-    if (/^(fee|charge|chargeable|note|notice|remarks|warning|alert)\b/i.test(l)) return true;
+    if (/^[\d,]+\s*(\/\-|\/=)$/i.test(l)) return true;
+    if (/^(fee|charge|chargeable|note|notice|remarks|warning|alert|সতর্কতা|নোট)\b/i.test(l)) return true;
     return false;
   }
 
@@ -576,8 +579,14 @@ RULES:
       }
     };
 
-    // Try gemini-2.5-flash first, fallback to gemini-1.5-flash
-    const models = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash'];
+    // Use latest Gemini models: gemini-3.8-flash first, followed by available fallbacks
+    const models = [
+      'gemini-3.8-flash',
+      'gemini-3.7-flash',
+      'gemini-3.5-flash-lite',
+      'gemini-3.5-flash',
+      'gemini-2.5-flash'
+    ];
     let lastError = null;
 
     for (const model of models) {
@@ -598,7 +607,11 @@ RULES:
         const candidateText = data.candidates?.[0]?.content?.parts?.[0]?.text;
         if (!candidateText) throw new Error('AI থেকে কোনো রেসপন্স পাওয়া যায়নি');
 
-        const parsedJson = JSON.parse(candidateText);
+        let jsonStr = candidateText.trim();
+        if (jsonStr.startsWith('```')) {
+          jsonStr = jsonStr.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+        }
+        const parsedJson = JSON.parse(jsonStr);
 
         // Find bank in our database using AI's bankName
         const detectedBank = findBank(parsedJson.bankName || '');
@@ -1262,7 +1275,9 @@ RULES:
       
       'prime-feni': `New prime bank ✅\nName: Shaon Uddin\nAccount: 3136214025769\nDist & Branch : Feni`,
       
-      'dbbl-agent': `'Acc name : Panshi Express\nAcc no: 1941100232969\nRouting no: 090270608\nBank name: Dutch Bangla\nBranch: Burichang'`
+      'dbbl-agent': `'Acc name : Panshi Express\nAcc no: 1941100232969\nRouting no: 090270608\nBank name: Dutch Bangla\nBranch: Burichang'`,
+
+      'ibbl-shilpi': `IBBL bank\nSHILPI AKTER\n20507770205294224\n63900 Tk`
     };
 
     document.querySelectorAll('.pill-btn').forEach(pill => {
