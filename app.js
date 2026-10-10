@@ -1,754 +1,864 @@
-/**
- * BD Bank Details Parser & Routing Number Finder
- * 100% Client-side Vanilla JavaScript with Gemini AI & Smart Offline Engine
- */
-
 (function () {
   'use strict';
-
-  // --- STORAGE KEYS ---
-  const HISTORY_STORAGE_KEY = 'bd_bank_parser_history_v1';
-  const THEME_STORAGE_KEY = 'bd_bank_parser_theme';
-  const GEMINI_API_KEY_STORAGE = 'bd_bank_gemini_api_key';
-  const GEMINI_AUTO_USE_STORAGE = 'bd_bank_gemini_auto_use';
-
-  // --- STATE ---
-  let banksDb = [];
-  let currentParsedResult = null;
-  let autoParseEnabled = true;
-  let historyItems = [];
-  let geminiApiKey = localStorage.getItem(GEMINI_API_KEY_STORAGE) || '';
-  let geminiAutoUse = localStorage.getItem(GEMINI_AUTO_USE_STORAGE) === 'true';
-
-  // --- DOM ELEMENTS ---
-  const rawInput = document.getElementById('raw-message-input');
-  const btnParse = document.getElementById('btn-parse');
-  const btnParseAi = document.getElementById('btn-parse-ai');
-  const btnClear = document.getElementById('btn-clear');
-  const btnPasteClipboard = document.getElementById('btn-paste-clipboard');
-  const autoParseToggle = document.getElementById('auto-parse-toggle');
-  const inputStats = document.getElementById('input-stats');
-  
-  const emptyState = document.getElementById('empty-state');
-  const resultView = document.getElementById('result-view');
-  const parserStatusTag = document.getElementById('parser-status-tag');
-
-  // Fields
-  const fieldName = document.getElementById('field-name');
-  const fieldBank = document.getElementById('field-bank');
-  const fieldAcc = document.getElementById('field-acc');
-  const fieldBranch = document.getElementById('field-branch');
-  const fieldRouting = document.getElementById('field-routing');
-  
-  const displayRoutingNumber = document.getElementById('display-routing-number');
-  const routingSourceBadge = document.getElementById('routing-source-badge');
-  const bdBankCode = document.getElementById('bd-bank-code');
-  const bdDistCode = document.getElementById('bd-dist-code');
-  const bdBranchCode = document.getElementById('bd-branch-code');
-  const bdCheckDigit = document.getElementById('bd-check-digit');
-  
-  const bankCodeBadge = document.getElementById('bank-code-badge');
-  const accLenBadge = document.getElementById('acc-len-badge');
-  const branchDistBadge = document.getElementById('branch-dist-badge');
-  
-  const candidatesBox = document.getElementById('branch-candidates-box');
-  const candidatesList = document.getElementById('candidates-pills');
-
-  const btnCopyAll = document.getElementById('btn-copy-all');
-  const btnSaveHistory = document.getElementById('btn-save-history');
-  const themeToggle = document.getElementById('theme-toggle');
-  const toastContainer = document.getElementById('toast-container');
-  const historyBadge = document.getElementById('history-badge');
-
-  // Search tab elements
-  const searchBankSelect = document.getElementById('search-bank-select');
-  const searchDistrictSelect = document.getElementById('search-district-select');
-  const searchQueryInput = document.getElementById('search-query-input');
-  const searchClearBtn = document.getElementById('search-clear-btn');
-  const searchResultsCount = document.getElementById('search-results-count');
-  const branchesTableBody = document.getElementById('branches-table-body');
-
-  // History tab elements
-  const historyList = document.getElementById('history-list');
-  const historyEmpty = document.getElementById('history-empty');
-  const btnClearHistory = document.getElementById('btn-clear-history');
-
-  // AI Modal elements
-  const aiModal = document.getElementById('ai-modal');
-  const btnOpenAiSettings = document.getElementById('btn-open-ai-settings');
-  const btnCloseAiModal = document.getElementById('ai-modal-close');
-  const btnCancelAiModal = document.getElementById('btn-cancel-ai-modal');
-  const btnSaveApiKey = document.getElementById('btn-save-api-key');
-  const btnRemoveApiKey = document.getElementById('btn-remove-api-key');
-  const aiApiKeyInput = document.getElementById('ai-api-key-input');
-  const aiKeyToggleVisibility = document.getElementById('ai-key-toggle-visibility');
-  const aiAutoUseToggle = document.getElementById('ai-auto-use-toggle');
-  const apiStatusPill = document.getElementById('api-status-pill');
-  const headerAiStatusText = document.getElementById('header-ai-status-text');
-
-  // --- INITIALIZATION ---
-  function init() {
-    initTheme();
-    loadDatabase();
-    initEventListeners();
-    loadHistory();
-    updateAiStatusUI();
-    populateSearchFilters();
-    renderSearchTable();
-    initPWA();
+  let _0x446c8d;
+  const _0x09f4ce = "\u0062\u0064\u005F\u0062\u0061\u006E\u006B\u005F\u0070\u0061\u0072\u0073\u0065\u0072\u005F\u0068\u0069\u0073\u0074\u006F\u0072\u0079\u005F\u0076\u0031";
+  _0x446c8d = (602617 ^ 602622) + (666791 ^ 666789);
+  const _0x9e72b = "\u0062\u0064\u005F\u0062\u0061\u006E\u006B\u005F\u0070\u0061\u0072\u0073\u0065\u0072\u005F\u0074\u0068\u0065\u006D\u0065";
+  let _0x63750a;
+  const _0x26gd4f = 'bd_bank_gemini_api_key';
+  _0x63750a = 122262 ^ 122257;
+  var _0xc74d = (951389 ^ 951390) + (838521 ^ 838513);
+  const _0x4_0xe27 = "\u0062\u0064\u005F\u0062\u0061\u006E\u006B\u005F\u0067\u0065\u006D\u0069\u006E\u0069\u005F\u0061\u0075\u0074\u006F\u005F\u0075\u0073\u0065";
+  _0xc74d = (647904 ^ 647908) + (479625 ^ 479631);
+  let _0x1c886d = [];
+  let _0x09daff;
+  let _0xce5d = null;
+  _0x09daff = '\u006F\u0064\u006B\u006A\u006F\u0066';
+  let _0x65f81a = !![];
+  var _0xacb14f = (295385 ^ 295386) + (229846 ^ 229845);
+  let _0xg9e3ae = [];
+  _0xacb14f = (601876 ^ 601876) + (854401 ^ 854408);
+  let _0xb8f78b;
+  let _0xcde = localStorage['\u0067\u0065\u0074\u0049\u0074\u0065\u006D'](_0x26gd4f) || '';
+  _0xb8f78b = '\u0067\u0066\u0065\u006D\u0063\u006E';
+  var _0x44f7gc = (275037 ^ 275033) + (801819 ^ 801822);
+  let _0x86a1c = localStorage['\u0067\u0065\u0074\u0049\u0074\u0065\u006D'](_0x4_0xe27) === 'true';
+  _0x44f7gc = 635306 ^ 635306;
+  let _0xgb70ea;
+  const _0x5b6c0b = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0072\u0061\u0077\u002D\u006D\u0065\u0073\u0073\u0061\u0067\u0065\u002D\u0069\u006E\u0070\u0075\u0074");
+  _0xgb70ea = 378275 ^ 378275;
+  const _0xa7a46e = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('btn-parse');
+  const _0xf3f95b = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('btn-parse-ai');
+  let _0x04e;
+  const _0x5bcaa = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('btn-clear');
+  _0x04e = (877498 ^ 877498) + (265520 ^ 265526);
+  const _0xega77c = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('btn-paste-clipboard');
+  var _0x91b = (763214 ^ 763215) + (340689 ^ 340696);
+  const _0x3efc8d = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0061\u0075\u0074\u006F\u002D\u0070\u0061\u0072\u0073\u0065\u002D\u0074\u006F\u0067\u0067\u006C\u0065");
+  _0x91b = "phkhfh";
+  const _0x372cb = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0069\u006E\u0070\u0075\u0074\u002D\u0073\u0074\u0061\u0074\u0073");
+  var _0x6c9c9c = (575137 ^ 575136) + (751070 ^ 751062);
+  const _0x24d8ce = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('empty-state');
+  _0x6c9c9c = "elmdmg";
+  let _0x5efd;
+  const _0x56g8g = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('result-view');
+  _0x5efd = (254693 ^ 254689) + (227548 ^ 227548);
+  const _0x094fg = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0070\u0061\u0072\u0073\u0065\u0072\u002D\u0073\u0074\u0061\u0074\u0075\u0073\u002D\u0074\u0061\u0067");
+  const _0x0cb = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0066\u0069\u0065\u006C\u0064\u002D\u006E\u0061\u006D\u0065");
+  var _0xfg6b5c = (941696 ^ 941697) + (881269 ^ 881277);
+  const _0xdba9cg = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0066\u0069\u0065\u006C\u0064\u002D\u0062\u0061\u006E\u006B");
+  _0xfg6b5c = "ffhogd";
+  let _0xebf1a;
+  const _0x5_0x46e = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0066\u0069\u0065\u006C\u0064\u002D\u0061\u0063\u0063");
+  _0xebf1a = "gpabbq";
+  const _0x455f = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('field-branch');
+  let _0x1b266d;
+  const _0xa393be = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('field-routing');
+  _0x1b266d = (890541 ^ 890539) + (355499 ^ 355490);
+  let _0x7e6e;
+  const _0xdc34c = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0064\u0069\u0073\u0070\u006C\u0061\u0079\u002D\u0072\u006F\u0075\u0074\u0069\u006E\u0067\u002D\u006E\u0075\u006D\u0062\u0065\u0072");
+  _0x7e6e = (138292 ^ 138288) + (145671 ^ 145669);
+  var _0x97d = (562854 ^ 562862) + (879230 ^ 879225);
+  const _0xb1e8ac = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('routing-source-badge');
+  _0x97d = 982431 ^ 982431;
+  const _0xb5fadc = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0062\u0064\u002D\u0062\u0061\u006E\u006B\u002D\u0063\u006F\u0064\u0065");
+  let _0xf2fd;
+  const _0x379c0a = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('bd-dist-code');
+  _0xf2fd = 394810 ^ 394809;
+  var _0xac5af = (809939 ^ 809941) + (999273 ^ 999277);
+  const _0xb0c89b = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0062\u0064\u002D\u0062\u0072\u0061\u006E\u0063\u0068\u002D\u0063\u006F\u0064\u0065");
+  _0xac5af = "lfhcgo";
+  const _0xc676bc = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0062\u0064\u002D\u0063\u0068\u0065\u0063\u006B\u002D\u0064\u0069\u0067\u0069\u0074");
+  var _0xa70bc = (334550 ^ 334550) + (643774 ^ 643766);
+  const _0x926g0c = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0062\u0061\u006E\u006B\u002D\u0063\u006F\u0064\u0065\u002D\u0062\u0061\u0064\u0067\u0065");
+  _0xa70bc = "cndbqi";
+  const _0x37e1f = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0061\u0063\u0063\u002D\u006C\u0065\u006E\u002D\u0062\u0061\u0064\u0067\u0065");
+  var _0x2a71ac = (455795 ^ 455799) + (587272 ^ 587276);
+  const _0x59452f = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('branch-dist-badge');
+  _0x2a71ac = (681528 ^ 681530) + (430678 ^ 430687);
+  var _0x2a5d4d = (854075 ^ 854079) + (595198 ^ 595196);
+  const _0xd6agcf = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0062\u0072\u0061\u006E\u0063\u0068\u002D\u0063\u0061\u006E\u0064\u0069\u0064\u0061\u0074\u0065\u0073\u002D\u0062\u006F\u0078");
+  _0x2a5d4d = 156350 ^ 156349;
+  let _0x53faa;
+  const _0x64b8b = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0063\u0061\u006E\u0064\u0069\u0064\u0061\u0074\u0065\u0073\u002D\u0070\u0069\u006C\u006C\u0073");
+  _0x53faa = 704617 ^ 704620;
+  var _0x82g3d = (883909 ^ 883910) + (293642 ^ 293635);
+  const _0xd30fag = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('btn-copy-all');
+  _0x82g3d = (332041 ^ 332046) + (985879 ^ 985878);
+  var _0x68a = (863086 ^ 863080) + (356461 ^ 356461);
+  const _0xde4ba = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('btn-save-history');
+  _0x68a = (168231 ^ 168239) + (857733 ^ 857730);
+  const _0x6cdb2d = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0074\u0068\u0065\u006D\u0065\u002D\u0074\u006F\u0067\u0067\u006C\u0065");
+  const _0xce053b = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0074\u006F\u0061\u0073\u0074\u002D\u0063\u006F\u006E\u0074\u0061\u0069\u006E\u0065\u0072");
+  var _0x34dc = (243458 ^ 243467) + (408027 ^ 408029);
+  const _0x8cf7b = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0068\u0069\u0073\u0074\u006F\u0072\u0079\u002D\u0062\u0061\u0064\u0067\u0065");
+  _0x34dc = (938140 ^ 938143) + (456065 ^ 456064);
+  let _0xb74b;
+  const _0xg8bbbd = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('search-bank-select');
+  _0xb74b = 113328 ^ 113330;
+  const _0x7c76d = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0073\u0065\u0061\u0072\u0063\u0068\u002D\u0064\u0069\u0073\u0074\u0072\u0069\u0063\u0074\u002D\u0073\u0065\u006C\u0065\u0063\u0074");
+  var _0x57e02d = (576557 ^ 576557) + (540449 ^ 540451);
+  const _0x31bbf = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('search-query-input');
+  _0x57e02d = (460593 ^ 460601) + (107933 ^ 107925);
+  var _0xb8a = (377934 ^ 377929) + (914949 ^ 914944);
+  const _0x1909g = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('search-clear-btn');
+  _0xb8a = (861490 ^ 861490) + (346206 ^ 346202);
+  const _0x3cbfb = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('search-results-count');
+  let _0x8cg14c;
+  const _0x9781ff = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0062\u0072\u0061\u006E\u0063\u0068\u0065\u0073\u002D\u0074\u0061\u0062\u006C\u0065\u002D\u0062\u006F\u0064\u0079");
+  _0x8cg14c = '\u006C\u006A\u0070\u0070\u0065\u0061';
+  var _0x9babf = (481654 ^ 481651) + (711868 ^ 711861);
+  const _0xd2fe7a = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0068\u0069\u0073\u0074\u006F\u0072\u0079\u002D\u006C\u0069\u0073\u0074");
+  _0x9babf = (209942 ^ 209942) + (912156 ^ 912149);
+  let _0x0418fa;
+  const _0xa8df6a = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0068\u0069\u0073\u0074\u006F\u0072\u0079\u002D\u0065\u006D\u0070\u0074\u0079");
+  _0x0418fa = (678260 ^ 678269) + (420450 ^ 420454);
+  const _0x6_0xc7c = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0062\u0074\u006E\u002D\u0063\u006C\u0065\u0061\u0072\u002D\u0068\u0069\u0073\u0074\u006F\u0072\u0079");
+  const _0x48d1g = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('ai-modal');
+  const _0xa6e2aa = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('btn-open-ai-settings');
+  const _0x919df = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0061\u0069\u002D\u006D\u006F\u0064\u0061\u006C\u002D\u0063\u006C\u006F\u0073\u0065");
+  const _0x7_0xefa = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('btn-cancel-ai-modal');
+  var _0xceef3g = (636577 ^ 636584) + (201348 ^ 201348);
+  const _0x9a18d = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0062\u0074\u006E\u002D\u0073\u0061\u0076\u0065\u002D\u0061\u0070\u0069\u002D\u006B\u0065\u0079");
+  _0xceef3g = (483939 ^ 483937) + (254627 ^ 254626);
+  const _0xf2776f = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0062\u0074\u006E\u002D\u0072\u0065\u006D\u006F\u0076\u0065\u002D\u0061\u0070\u0069\u002D\u006B\u0065\u0079");
+  var _0xg0dag = (517582 ^ 517577) + (679327 ^ 679327);
+  const _0x1d29e = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0061\u0069\u002D\u0061\u0070\u0069\u002D\u006B\u0065\u0079\u002D\u0069\u006E\u0070\u0075\u0074");
+  _0xg0dag = (140333 ^ 140334) + (197942 ^ 197942);
+  var _0xa03edd = (661059 ^ 661061) + (375132 ^ 375131);
+  const _0x4518gb = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('ai-key-toggle-visibility');
+  _0xa03edd = '\u006A\u006E\u0065\u0065\u0065\u0067';
+  let _0x2ed;
+  const _0x342b3f = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0061\u0069\u002D\u0061\u0075\u0074\u006F\u002D\u0075\u0073\u0065\u002D\u0074\u006F\u0067\u0067\u006C\u0065");
+  _0x2ed = 754821 ^ 754823;
+  const _0x7d8d7d = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0061\u0070\u0069\u002D\u0073\u0074\u0061\u0074\u0075\u0073\u002D\u0070\u0069\u006C\u006C");
+  let _0x07b;
+  const _0xa_0xb89 = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0068\u0065\u0061\u0064\u0065\u0072\u002D\u0061\u0069\u002D\u0073\u0074\u0061\u0074\u0075\u0073\u002D\u0074\u0065\u0078\u0074");
+  _0x07b = (470184 ^ 470184) + (961477 ^ 961484);
+  function _0x68fbc() {
+    _0x87ee();
+    _0x430a();
+    _0xc9db8e();
+    _0x4f454d();
+    _0xbgde();
+    _0x0f9a8e();
+    _0x2591da();
+    _0x2027df();
   }
-
-  // --- THEME ---
-  function initTheme() {
-    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'dark-theme';
-    document.body.className = savedTheme;
+  function _0x87ee() {
+    var _0xb94d = (754235 ^ 754239) + (443227 ^ 443227);
+    const _0xc0d74b = localStorage['\u0067\u0065\u0074\u0049\u0074\u0065\u006D'](_0x9e72b) || "\u0064\u0061\u0072\u006B\u002D\u0074\u0068\u0065\u006D\u0065";
+    _0xb94d = "gdmhac";
+    document['\u0062\u006F\u0064\u0079']['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065'] = _0xc0d74b;
   }
-
-  function toggleTheme() {
-    const isDark = document.body.classList.contains('dark-theme');
-    const newTheme = isDark ? 'light-theme' : 'dark-theme';
-    document.body.className = newTheme;
-    localStorage.setItem(THEME_STORAGE_KEY, newTheme);
-    showToast(isDark ? 'লাইট থিম সক্রিয় করা হয়েছে' : 'ডার্ক থিম সক্রিয় করা হয়েছে');
+  function _0xf6d7f() {
+    var _0xadg5fc = (544062 ^ 544055) + (875966 ^ 875958);
+    const _0x3a2a = document['\u0062\u006F\u0064\u0079']['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0063\u006F\u006E\u0074\u0061\u0069\u006E\u0073']('dark-theme');
+    _0xadg5fc = (654865 ^ 654864) + (815960 ^ 815967);
+    const _0xdae1ae = _0x3a2a ? 'light-theme' : "\u0064\u0061\u0072\u006B\u002D\u0074\u0068\u0065\u006D\u0065";
+    document['\u0062\u006F\u0064\u0079']['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065'] = _0xdae1ae;
+    localStorage['\u0073\u0065\u0074\u0049\u0074\u0065\u006D'](_0x9e72b, _0xdae1ae);
+    _0xc3ae(_0x3a2a ? 'লাইট থিম সক্রিয় করা হয়েছে' : "\u09A1\u09BE\u09B0\u09CD\u0995\u0020\u09A5\u09BF\u09AE\u0020\u09B8\u0995\u09CD\u09B0\u09BF\u09AF\u09BC\u0020\u0995\u09B0\u09BE\u0020\u09B9\u09AF\u09BC\u09C7\u099B\u09C7");
   }
-
-  // --- DATABASE ---
-  function loadDatabase() {
-    const db = (typeof window !== 'undefined' ? window.BANKS_DATABASE : globalThis.BANKS_DATABASE);
-    if (db && Array.isArray(db)) {
-      banksDb = db;
-      const totalBranches = banksDb.reduce((sum, b) => sum + (b.b ? b.b.length : 0), 0);
-      const statusBadge = document.getElementById('db-status-badge');
-      if (statusBadge) {
-        statusBadge.textContent = `🏦 ${banksDb.length} ব্যাংক • ${totalBranches.toLocaleString('bn-BD')} ব্রাঞ্চ`;
+  function _0x430a() {
+    var _0x44fcd = (179720 ^ 179726) + (553239 ^ 553238);
+    const _0xgca = typeof window !== 'undefined' ? window['\u0042\u0041\u004E\u004B\u0053\u005F\u0044\u0041\u0054\u0041\u0042\u0041\u0053\u0045'] : globalThis['\u0042\u0041\u004E\u004B\u0053\u005F\u0044\u0041\u0054\u0041\u0042\u0041\u0053\u0045'];
+    _0x44fcd = "ppdkhg";
+    if (_0xgca && Array['\u0069\u0073\u0041\u0072\u0072\u0061\u0079'](_0xgca)) {
+      _0x1c886d = _0xgca;
+      var _0xb_0x85g = (860013 ^ 860015) + (755540 ^ 755543);
+      const _0xab47eg = _0x1c886d['\u0072\u0065\u0064\u0075\u0063\u0065']((sum, b) => sum + (b['\u0062'] ? b['\u0062']['\u006C\u0065\u006E\u0067\u0074\u0068'] : 509099 ^ 509099), 255886 ^ 255886);
+      _0xb_0x85g = (225762 ^ 225771) + (464411 ^ 464408);
+      const _0x8c_0x660 = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0064\u0062\u002D\u0073\u0074\u0061\u0074\u0075\u0073\u002D\u0062\u0061\u0064\u0067\u0065");
+      if (_0x8c_0x660) {
+        _0x8c_0x660['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = `🏦 ${_0x1c886d['\u006C\u0065\u006E\u0067\u0074\u0068']} ব্যাংক • ${_0xab47eg['\u0074\u006F\u004C\u006F\u0063\u0061\u006C\u0065\u0053\u0074\u0072\u0069\u006E\u0067']("\u0062\u006E\u002D\u0042\u0044")} ব্রাঞ্চ`;
       }
     } else {
-      showToast('ব্যাংক ডেটাবেজ লোড হতে সমস্যা হয়েছে!', 'error');
+      _0xc3ae("\u09AC\u09CD\u09AF\u09BE\u0982\u0995\u0020\u09A1\u09C7\u099F\u09BE\u09AC\u09C7\u099C\u0020\u09B2\u09CB\u09A1\u0020\u09B9\u09A4\u09C7\u0020\u09B8\u09AE\u09B8\u09CD\u09AF\u09BE\u0020\u09B9\u09AF\u09BC\u09C7\u099B\u09C7\u0021", "\u0065\u0072\u0072\u006F\u0072");
     }
   }
-
-  // --- UTILITIES ---
-  function bengaliToLatinDigits(str) {
+  function _0xea2dfb(str) {
     if (!str) return '';
-    const bnDigits = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
-    return str.replace(/[০-৯]/g, d => bnDigits.indexOf(d).toString());
+    let _0x4eb9fe;
+    const _0xaafda = ["\u09E6", "\u09E7", "\u09E8", "\u09E9", "\u09EA", "\u09EB", "\u09EC", "\u09ED", "\u09EE", "\u09EF"];
+    _0x4eb9fe = "gikojc";
+    return str['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u005B\u09E6\u002D\u09EF\u005D', '\u0067'), d => _0xaafda['\u0069\u006E\u0064\u0065\u0078\u004F\u0066'](d)['\u0074\u006F\u0053\u0074\u0072\u0069\u006E\u0067']());
   }
-
-  function cleanText(str) {
+  function _0x12efag(str) {
     if (!str) return '';
-    return str
-      .replace(/^['"“]+|['"”]+$/g, '')
-      .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, ' ')
-      .trim();
+    return str['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u005E\u005B\u0027\u0022\u201C\u005D\u002B\u007C\u005B\u0027\u0022\u201D\u005D\u002B\u0024', '\u0067'), '')['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp("[\\u{1F300}-\\u{1FAFF}\\u{2600}-\\u{26FF}\\u{2700}-\\u{27BF}]", '\u0067\u0075'), "\u0020")['\u0074\u0072\u0069\u006D']();
   }
-
-  function isUnwantedText(line) {
-    const l = line.trim().toLowerCase();
-    if (!l || l === '-' || l === '--' || l === '---' || l === '.' || l === '/' || l === '//') return true;
-    if (/^(minimum|min|maximum|max|limit|amount|amt|টাকার পরিমাণ|টাকা|পরিমাণ)\s*[:\-\s]*[\d,]+/i.test(l)) return true;
-    if (/^(bdt|tk|tk\.|taka|টাকা)\s*[:\-\s]*[\d,]+(\.\d+)?/i.test(l)) return true;
-    if (/^[\d,]+(\.\d+)?\s*(\/\-|\/=)?\s*(k|bdt|tk|tk\.|taka|টাকা|টাকার|হাজার|lakh|lac|cr)\b/i.test(l)) return true;
-    if (/^\d+(\.\d+)?\s*(k|bdt|tk|tk\.|taka|টাকা|হাজার|lakh|lac|cr)$/i.test(l)) return true;
-    if (/^\d+\s*k$/i.test(l)) return true;
-    if (/^[\d,]+\s*(\/\-|\/=)$/i.test(l)) return true;
-    if (/^(fee|charge|chargeable|note|notice|remarks|warning|alert|সতর্কতা|নোট)\b/i.test(l)) return true;
+  function _0xa33a(line) {
+    var _0xa9cc = (388839 ^ 388846) + (452424 ^ 452431);
+    const l = line['\u0074\u0072\u0069\u006D']()['\u0074\u006F\u004C\u006F\u0077\u0065\u0072\u0043\u0061\u0073\u0065']();
+    _0xa9cc = 762816 ^ 762824;
+    if (!l || l === "\u002D" || l === "\u002D\u002D" || l === '---' || l === "\u002E" || l === "\u002F" || l === '//') return !![];
+    if (new RegExp('\u005E\u0028\u006D\u0069\u006E\u0069\u006D\u0075\u006D\u007C\u006D\u0069\u006E\u007C\u006D\u0061\u0078\u0069\u006D\u0075\u006D\u007C\u006D\u0061\u0078\u007C\u006C\u0069\u006D\u0069\u0074\u007C\u0061\u006D\u006F\u0075\u006E\u0074\u007C\u0061\u006D\u0074\u007C\u099F\u09BE\u0995\u09BE\u09B0\u0020\u09AA\u09B0\u09BF\u09AE\u09BE\u09A3\u007C\u099F\u09BE\u0995\u09BE\u007C\u09AA\u09B0\u09BF\u09AE\u09BE\u09A3\u0029\u005C\u0073\u002A\u005B\u003A\u005C\u002D\u005C\u0073\u005D\u002A\u005B\u005C\u0064\u002C\u005D\u002B', '\u0069')['\u0074\u0065\u0073\u0074'](l)) return !![];
+    if (new RegExp('\u005E\u0028\u0062\u0064\u0074\u007C\u0074\u006B\u007C\u0074\u006B\u005C\u002E\u007C\u0074\u0061\u006B\u0061\u007C\u099F\u09BE\u0995\u09BE\u0029\u005C\u0073\u002A\u005B\u003A\u005C\u002D\u005C\u0073\u005D\u002A\u005B\u005C\u0064\u002C\u005D\u002B\u0028\u005C\u002E\u005C\u0064\u002B\u0029\u003F', '\u0069')['\u0074\u0065\u0073\u0074'](l)) return !![];
+    if (new RegExp('\u005E\u005B\u005C\u0064\u002C\u005D\u002B\u0028\u005C\u002E\u005C\u0064\u002B\u0029\u003F\u005C\u0073\u002A\u0028\u005C\u002F\u005C\u002D\u007C\u005C\u002F\u003D\u0029\u003F\u005C\u0073\u002A\u0028\u006B\u007C\u0062\u0064\u0074\u007C\u0074\u006B\u007C\u0074\u006B\u005C\u002E\u007C\u0074\u0061\u006B\u0061\u007C\u099F\u09BE\u0995\u09BE\u007C\u099F\u09BE\u0995\u09BE\u09B0\u007C\u09B9\u09BE\u099C\u09BE\u09B0\u007C\u006C\u0061\u006B\u0068\u007C\u006C\u0061\u0063\u007C\u0063\u0072\u0029\u005C\u0062', '\u0069')['\u0074\u0065\u0073\u0074'](l)) return !![];
+    if (new RegExp('\u005E\u005C\u0064\u002B\u0028\u005C\u002E\u005C\u0064\u002B\u0029\u003F\u005C\u0073\u002A\u0028\u006B\u007C\u0062\u0064\u0074\u007C\u0074\u006B\u007C\u0074\u006B\u005C\u002E\u007C\u0074\u0061\u006B\u0061\u007C\u099F\u09BE\u0995\u09BE\u007C\u09B9\u09BE\u099C\u09BE\u09B0\u007C\u006C\u0061\u006B\u0068\u007C\u006C\u0061\u0063\u007C\u0063\u0072\u0029\u0024', '\u0069')['\u0074\u0065\u0073\u0074'](l)) return !![];
+    if (new RegExp("^\\d+\\s*k$", '\u0069')['\u0074\u0065\u0073\u0074'](l)) return !![];
+    if (new RegExp('\u005E\u005B\u005C\u0064\u002C\u005D\u002B\u005C\u0073\u002A\u0028\u005C\u002F\u005C\u002D\u007C\u005C\u002F\u003D\u0029\u0024', '\u0069')['\u0074\u0065\u0073\u0074'](l)) return !![];
+    if (new RegExp('\u005E\u0028\u0066\u0065\u0065\u007C\u0063\u0068\u0061\u0072\u0067\u0065\u007C\u0063\u0068\u0061\u0072\u0067\u0065\u0061\u0062\u006C\u0065\u007C\u006E\u006F\u0074\u0065\u007C\u006E\u006F\u0074\u0069\u0063\u0065\u007C\u0072\u0065\u006D\u0061\u0072\u006B\u0073\u007C\u0077\u0061\u0072\u006E\u0069\u006E\u0067\u007C\u0061\u006C\u0065\u0072\u0074\u007C\u09B8\u09A4\u09B0\u09CD\u0995\u09A4\u09BE\u007C\u09A8\u09CB\u099F\u0029\u005C\u0062', '\u0069')['\u0074\u0065\u0073\u0074'](l)) return !![];
     return false;
   }
-
-  function normalizeStr(str) {
-    return cleanText(bengaliToLatinDigits(str))
-      .toLowerCase()
-      .replace(/[^\w\s\u0980-\u09FF]/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
+  function _0x53b4cb(str) {
+    return _0x12efag(_0xea2dfb(str))['\u0074\u006F\u004C\u006F\u0077\u0065\u0072\u0043\u0061\u0073\u0065']()['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp("[^\\w\\s\\u0980-\\u09FF]", '\u0067'), "\u0020")['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u005C\u0073\u002B', '\u0067'), "\u0020")['\u0074\u0072\u0069\u006D']();
   }
-
-  function toPhonetic(str) {
+  function _0xe7b(str) {
     if (!str) return '';
-    return str
-      .toLowerCase()
-      .replace(/ai|ay|ey/g, 'i')
-      .replace(/ee|ea/g, 'i')
-      .replace(/oo|ou/g, 'u')
-      .replace(/o/g, 'a')
-      .replace(/th/g, 't')
-      .replace(/dh/g, 'd')
-      .replace(/bh/g, 'b')
-      .replace(/kh/g, 'k')
-      .replace(/gh/g, 'g')
-      .replace(/ch/g, 'c')
-      .replace(/jh/g, 'j')
-      .replace(/sh/g, 's')
-      .replace(/z/g, 'j')
-      .replace(/w/g, 'v')
-      .replace(/q/g, 'k')
-      .replace(/e$/g, '')
-      .replace(/h$/g, '')
-      .trim();
+    return str['\u0074\u006F\u004C\u006F\u0077\u0065\u0072\u0043\u0061\u0073\u0065']()['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp("ai|ay|ey", '\u0067'), "\u0069")['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0065\u0065\u007C\u0065\u0061', '\u0067'), "\u0069")['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u006F\u006F\u007C\u006F\u0075', '\u0067'), "\u0075")['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u006F', '\u0067'), "\u0061")['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp("th", '\u0067'), "\u0074")['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0064\u0068', '\u0067'), "\u0064")['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0062\u0068', '\u0067'), "\u0062")['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u006B\u0068', '\u0067'), "\u006B")['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0067\u0068', '\u0067'), "\u0067")['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0063\u0068', '\u0067'), "\u0063")['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u006A\u0068', '\u0067'), "\u006A")['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp("sh", '\u0067'), "\u0073")['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u007A', '\u0067'), "\u006A")['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0077', '\u0067'), "\u0076")['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0071', '\u0067'), "\u006B")['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0065\u0024', '\u0067'), '')['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp("h$", '\u0067'), '')['\u0074\u0072\u0069\u006D']();
   }
-
-  function levenshteinDistance(s1, s2) {
-    if (s1 === s2) return 0;
-    if (!s1.length) return s2.length;
-    if (!s2.length) return s1.length;
+  function _0xc4bdb(s1, s2) {
+    if (s1 === s2) return 438081 ^ 438081;
+    if (!s1['\u006C\u0065\u006E\u0067\u0074\u0068']) return s2['\u006C\u0065\u006E\u0067\u0074\u0068'];
+    if (!s2['\u006C\u0065\u006E\u0067\u0074\u0068']) return s1['\u006C\u0065\u006E\u0067\u0074\u0068'];
+    var _0xfc568b = (234659 ^ 234667) + (140692 ^ 140691);
     const d = [];
-    for (let i = 0; i <= s1.length; i++) d[i] = [i];
-    for (let j = 0; j <= s2.length; j++) d[0][j] = j;
-    for (let i = 1; i <= s1.length; i++) {
-      for (let j = 1; j <= s2.length; j++) {
-        const cost = s1[i - 1] === s2[j - 1] ? 0 : 1;
-        d[i][j] = Math.min(
-          d[i - 1][j] + 1,
-          d[i][j - 1] + 1,
-          d[i - 1][j - 1] + cost
-        );
+    _0xfc568b = (548104 ^ 548104) + (991149 ^ 991141);
+    for (let i = 445668 ^ 445668; i <= s1['\u006C\u0065\u006E\u0067\u0074\u0068']; i++) d[i] = [i];
+    for (let j = 869479 ^ 869479; j <= s2['\u006C\u0065\u006E\u0067\u0074\u0068']; j++) d[401133 ^ 401133][j] = j;
+    for (let i = 944116 ^ 944117; i <= s1['\u006C\u0065\u006E\u0067\u0074\u0068']; i++) {
+      for (let j = 496633 ^ 496632; j <= s2['\u006C\u0065\u006E\u0067\u0074\u0068']; j++) {
+        let _0xbd68a;
+        const _0x7e9a8d = s1[i - (348574 ^ 348575)] === s2[j - (942773 ^ 942772)] ? 593706 ^ 593706 : 621501 ^ 621500;
+        _0xbd68a = (878212 ^ 878213) + (973300 ^ 973297);
+        d[i][j] = Math['\u006D\u0069\u006E'](d[i - (252560 ^ 252561)][j] + (575870 ^ 575871), d[i][j - (962959 ^ 962958)] + (818557 ^ 818556), d[i - (147631 ^ 147630)][j - (972294 ^ 972295)] + _0x7e9a8d);
       }
     }
-    return d[s1.length][s2.length];
+    return d[s1['\u006C\u0065\u006E\u0067\u0074\u0068']][s2['\u006C\u0065\u006E\u0067\u0074\u0068']];
   }
-
-  function stringSimilarity(s1, s2) {
-    const maxLen = Math.max(s1.length, s2.length);
-    if (maxLen === 0) return 1.0;
-    return 1.0 - (levenshteinDistance(s1, s2) / maxLen);
+  function _0x6a12c(s1, s2) {
+    var _0xc89a7a = (496899 ^ 496902) + (294493 ^ 294491);
+    const _0xf5792d = Math['\u006D\u0061\u0078'](s1['\u006C\u0065\u006E\u0067\u0074\u0068'], s2['\u006C\u0065\u006E\u0067\u0074\u0068']);
+    _0xc89a7a = 492245 ^ 492243;
+    if (_0xf5792d === (646760 ^ 646760)) return 227000 ^ 227001;
+    return (473616 ^ 473617) - _0xc4bdb(s1, s2) / _0xf5792d;
   }
-
-  // Known Bangladeshi bank acronyms and aliases (matched to Bangladesh Bank 3-digit bank codes)
-  const KNOWN_BANKS_MAP = [
-    { code: '010', names: ['agrani bank', 'agrani', 'অগ্রণী ব্যাংক', 'অগ্রণী'] },
-    { code: '015', names: ['aibl', 'al arafah islami bank', 'al-arafah islami bank', 'al arafah', 'al-arafah', 'আল-আরাফাহ ইসলামী ব্যাংক', 'আল আরাফাহ'] },
-    { code: '020', names: ['ab bank', 'abbl', 'arab bangladesh bank', 'এবি ব্যাংক', 'আরব বাংলাদেশ ব্যাংক'] },
-    { code: '025', names: ['bangladesh bank', 'bb', 'বাংলাদেশ ব্যাংক'] },
-    { code: '030', names: ['bangladesh commerce bank', 'bcbl', 'বাংলাদেশ কমার্স ব্যাংক'] },
-    { code: '035', names: ['bangladesh krishi bank', 'bkb', 'কৃষি ব্যাংক', 'বাংলাদেশ কৃষি ব্যাংক'] },
-    { code: '040', names: ['bangladesh samabaya bank', 'সমবায় ব্যাংক'] },
-    { code: '047', names: ['bangladesh development bank', 'bdbl', 'বাংলাদেশ ডেভেলপমেন্ট ব্যাংক', 'বিডিবিএল'] },
-    { code: '055', names: ['basic bank', 'বেসিক ব্যাংক'] },
-    { code: '060', names: ['brac bank', 'brac', 'ব্র্যাক ব্যাংক', 'ব্র্যাক'] },
-    { code: '065', names: ['bank al falah', 'bank al-falah', 'আল-ফালাহ'] },
-    { code: '070', names: ['bank asia', 'ব্যাংক এশিয়া'] },
-    { code: '075', names: ['citibank', 'citibank n.a', 'সিটিব্যাংক'] },
-    { code: '080', names: ['commercial bank of ceylon', 'ceylon bank'] },
-    { code: '085', names: ['dhaka bank', 'dbl', 'ঢাকা ব্যাংক'] },
-    { code: '090', names: ['dbbl', 'dutch bangla bank', 'dutch bangla', 'dutch-bangla', 'ডাচ বাংলা', 'ডাচ-বাংলা', 'ডাচ বাংলা ব্যাংক'] },
-    { code: '095', names: ['eastern bank', 'ebl', 'ইস্টার্ন ব্যাংক', 'ইস্টার্ন'] },
-    { code: '100', names: ['exim bank', 'exim', 'export import bank of bangladesh', 'এক্সিম ব্যাংক', 'এক্সিম'] },
-    { code: '105', names: ['fsibl', 'first security islami bank', 'first security islamic bank', 'first security', 'ফার্স্ট সিকিউরিটি ইসলামী ব্যাংক', 'ফার্স্ট সিকিউরিটি'] },
-    { code: '110', names: ['habib bank', 'hbl', 'habib bank ltd', 'হাবিব ব্যাংক'] },
-    { code: '115', names: ['hsbc', 'hsbc bank', 'hongkong and shanghai banking'] },
-    { code: '120', names: ['ific bank', 'ific', 'আইএফআইসি ব্যাংক', 'আইএফআইসি'] },
-    { code: '125', names: ['ibbl', 'islami bank bangladesh', 'islami bank', 'islamic bank', 'ইসলামী ব্যাংক বাংলাদেশ', 'ইসলামী ব্যাংক'] },
-    { code: '130', names: ['jamuna bank', 'যমুনা ব্যাংক'] },
-    { code: '135', names: ['janata bank', 'janata', 'জনতা ব্যাংক', 'জনতা'] },
-    { code: '140', names: ['mercantile bank', 'mbl', 'মার্কেন্টাইল ব্যাংক'] },
-    { code: '145', names: ['mutual trust bank', 'mtb', 'mtbl', 'মিউচুয়াল ট্রাস্ট ব্যাংক'] },
-    { code: '150', names: ['national bank', 'nbl', 'ন্যাশনাল ব্যাংক'] },
-    { code: '155', names: ['national bank of pakistan'] },
-    { code: '160', names: ['national credit & commerce bank', 'ncc bank', 'nccb', 'এনসিসি ব্যাংক', 'এনসিসি'] },
-    { code: '165', names: ['one bank', 'obl', 'ওয়ান ব্যাংক'] },
-    { code: '170', names: ['prime bank', 'prime', 'প্রাইম ব্যাংক', 'প্রাইম'] },
-    { code: '175', names: ['pubali bank', 'pubali', 'পূবালী ব্যাংক', 'পূবালী'] },
-    { code: '180', names: ['rajshahi krishi unnayan bank', 'rakub', 'রাকাব', 'রাজশাহী কৃষি উন্নয়ন ব্যাংক'] },
-    { code: '185', names: ['rupali bank', 'rupali', 'রূপালী ব্যাংক', 'রূপালী'] },
-    { code: '190', names: ['sjibl', 'shahjalal islami bank', 'shahjalal', 'শাহজালাল ইসলামী ব্যাংক', 'শাহজালাল'] },
-    { code: '195', names: ['sibl', 'social islami bank', 'সোশ্যাল ইসলামী ব্যাংক', 'সোশ্যাল'] },
-    { code: '200', names: ['sonali bank', 'sonali', 'সোনালী ব্যাংক', 'সোনালী'] },
-    { code: '205', names: ['southeast bank', 'sebl', 'সাউথইস্ট ব্যাংক'] },
-    { code: '210', names: ['standard islami bank', 'standard bank', 'স্ট্যান্ডার্ড ব্যাংক', 'স্ট্যান্ডার্ড ইসলামী ব্যাংক'] },
-    { code: '215', names: ['standard chartered', 'scb', 'standard chartered bank', 'স্ট্যান্ডার্ড চার্টার্ড'] },
-    { code: '220', names: ['state bank of india', 'sbi'] },
-    { code: '225', names: ['the city bank', 'city bank', 'cbl', 'সিটি ব্যাংক'] },
-    { code: '230', names: ['icb islamic bank', 'icb islamic', 'icb'] },
-    { code: '235', names: ['the premier bank', 'premier bank', 'প্রিমিয়ার ব্যাংক'] },
-    { code: '240', names: ['trust bank', 'tbl', 'ট্রাস্ট ব্যাংক'] },
-    { code: '245', names: ['united commercial bank', 'ucb', 'ucbl', 'ইউসিবি', 'ইউনাইটেড কমার্শিয়াল ব্যাংক'] },
-    { code: '250', names: ['uttara bank', 'উত্তরা ব্যাংক'] },
-    { code: '255', names: ['woori bank', 'উরি ব্যাংক'] },
-    { code: '260', names: ['nrb commercial bank', 'nrbc bank', 'nrbc', 'এনআরবি কমার্শিয়াল ব্যাংক'] },
-    { code: '265', names: ['union bank', 'ইউনিয়ন ব্যাংক'] },
-    { code: '270', names: ['sbac bank', 'south bangla agriculture', 'এসবিএসি ব্যাংক'] },
-    { code: '275', names: ['meghna bank', 'মেঘনা ব্যাংক'] },
-    { code: '280', names: ['padma bank', 'পদ্মা ব্যাংক'] },
-    { code: '285', names: ['midland bank', 'মিডল্যান্ড ব্যাংক'] },
-    { code: '290', names: ['nrb bank', 'এনআরবি ব্যাংক'] },
-    { code: '295', names: ['modhumoti bank', 'মধুমতি ব্যাংক'] },
-    { code: '300', names: ['gibl', 'global islami bank', 'গ্লোবাল ইসলামী ব্যাংক', 'গ্লোবাল'] },
-    { code: '305', names: ['shimanto bank', 'সীমান্ত ব্যাংক'] },
-    { code: '310', names: ['community bank bangladesh', 'community bank', 'কমিউনিটি ব্যাংক'] },
-    { code: '315', names: ['bengal commercial bank', 'বেঙ্গল কমার্শিয়াল ব্যাংক'] },
-    { code: '320', names: ['citizens bank', 'সিটিজেন্স ব্যাংক'] }
-  ];
-
-  function findBank(text) {
-    const norm = normalizeStr(text);
-    if (!norm) return null;
-
-    let bestMatch = null;
-    let bestScore = 0;
-
-    // 1. Check known aliases (prioritize longest, most specific match)
-    for (const item of KNOWN_BANKS_MAP) {
-      for (const alias of item.names) {
-        const aNorm = normalizeStr(alias);
-        const regex = new RegExp(`\\b${aNorm}\\b`, 'i');
-        if (regex.test(norm)) {
-          // Guard: Do not let generic 'islami bank' match if text specifies another Islamic bank
-          if ((aNorm === 'islami bank' || aNorm === 'islamic bank' || aNorm === 'ইসলামী ব্যাংক') &&
-              /first security|fsibl|social|sibl|al arafah|al-arafah|aibl|shahjalal|sjibl|global|gibl|icb|ফার্স্ট সিকিউরিটি|সোশ্যাল|আল আরাফাহ|শাহজালাল/i.test(norm)) {
+  const _0x6e_0x95a = [{
+    '\u0063\u006F\u0064\u0065': "\u0030\u0031\u0030",
+    "names": ["\u0061\u0067\u0072\u0061\u006E\u0069\u0020\u0062\u0061\u006E\u006B", 'agrani', "\u0985\u0997\u09CD\u09B0\u09A3\u09C0\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995", "\u0985\u0997\u09CD\u09B0\u09A3\u09C0"]
+  }, {
+    '\u0063\u006F\u0064\u0065': '015',
+    '\u006E\u0061\u006D\u0065\u0073': ["\u0061\u0069\u0062\u006C", "\u0061\u006C\u0020\u0061\u0072\u0061\u0066\u0061\u0068\u0020\u0069\u0073\u006C\u0061\u006D\u0069\u0020\u0062\u0061\u006E\u006B", "\u0061\u006C\u002D\u0061\u0072\u0061\u0066\u0061\u0068\u0020\u0069\u0073\u006C\u0061\u006D\u0069\u0020\u0062\u0061\u006E\u006B", "\u0061\u006C\u0020\u0061\u0072\u0061\u0066\u0061\u0068", "\u0061\u006C\u002D\u0061\u0072\u0061\u0066\u0061\u0068", 'আল-আরাফাহ ইসলামী ব্যাংক', 'আল আরাফাহ']
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0030\u0032\u0030",
+    '\u006E\u0061\u006D\u0065\u0073': ["\u0061\u0062\u0020\u0062\u0061\u006E\u006B", 'abbl', 'arab bangladesh bank', "\u098F\u09AC\u09BF\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995", "\u0986\u09B0\u09AC\u0020\u09AC\u09BE\u0982\u09B2\u09BE\u09A6\u09C7\u09B6\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0030\u0032\u0035",
+    '\u006E\u0061\u006D\u0065\u0073': ["\u0062\u0061\u006E\u0067\u006C\u0061\u0064\u0065\u0073\u0068\u0020\u0062\u0061\u006E\u006B", "\u0062\u0062", "\u09AC\u09BE\u0982\u09B2\u09BE\u09A6\u09C7\u09B6\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    "code": '030',
+    '\u006E\u0061\u006D\u0065\u0073': ['bangladesh commerce bank', "\u0062\u0063\u0062\u006C", 'বাংলাদেশ কমার্স ব্যাংক']
+  }, {
+    "code": "\u0030\u0033\u0035",
+    '\u006E\u0061\u006D\u0065\u0073': ['bangladesh krishi bank', 'bkb', "\u0995\u09C3\u09B7\u09BF\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995", "\u09AC\u09BE\u0982\u09B2\u09BE\u09A6\u09C7\u09B6\u0020\u0995\u09C3\u09B7\u09BF\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0030\u0034\u0030",
+    '\u006E\u0061\u006D\u0065\u0073': ['bangladesh samabaya bank', 'সমবায় ব্যাংক']
+  }, {
+    '\u0063\u006F\u0064\u0065': '047',
+    '\u006E\u0061\u006D\u0065\u0073': ['bangladesh development bank', 'bdbl', 'বাংলাদেশ ডেভেলপমেন্ট ব্যাংক', "\u09AC\u09BF\u09A1\u09BF\u09AC\u09BF\u098F\u09B2"]
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0030\u0035\u0035",
+    '\u006E\u0061\u006D\u0065\u0073': ['basic bank', "\u09AC\u09C7\u09B8\u09BF\u0995\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0030\u0036\u0030",
+    '\u006E\u0061\u006D\u0065\u0073': ['brac bank', "\u0062\u0072\u0061\u0063", 'ব্র্যাক ব্যাংক', 'ব্র্যাক']
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0030\u0036\u0035",
+    "names": ["\u0062\u0061\u006E\u006B\u0020\u0061\u006C\u0020\u0066\u0061\u006C\u0061\u0068", 'bank al-falah', "\u0986\u09B2\u002D\u09AB\u09BE\u09B2\u09BE\u09B9"]
+  }, {
+    '\u0063\u006F\u0064\u0065': '070',
+    '\u006E\u0061\u006D\u0065\u0073': ["\u0062\u0061\u006E\u006B\u0020\u0061\u0073\u0069\u0061", 'ব্যাংক এশিয়া']
+  }, {
+    '\u0063\u006F\u0064\u0065': '075',
+    '\u006E\u0061\u006D\u0065\u0073': ['citibank', "\u0063\u0069\u0074\u0069\u0062\u0061\u006E\u006B\u0020\u006E\u002E\u0061", 'সিটিব্যাংক']
+  }, {
+    "code": '080',
+    '\u006E\u0061\u006D\u0065\u0073': ["\u0063\u006F\u006D\u006D\u0065\u0072\u0063\u0069\u0061\u006C\u0020\u0062\u0061\u006E\u006B\u0020\u006F\u0066\u0020\u0063\u0065\u0079\u006C\u006F\u006E", "\u0063\u0065\u0079\u006C\u006F\u006E\u0020\u0062\u0061\u006E\u006B"]
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0030\u0038\u0035",
+    '\u006E\u0061\u006D\u0065\u0073': ["\u0064\u0068\u0061\u006B\u0061\u0020\u0062\u0061\u006E\u006B", "\u0064\u0062\u006C", 'ঢাকা ব্যাংক']
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0030\u0039\u0030",
+    "names": ["\u0064\u0062\u0062\u006C", "\u0064\u0075\u0074\u0063\u0068\u0020\u0062\u0061\u006E\u0067\u006C\u0061\u0020\u0062\u0061\u006E\u006B", 'dutch bangla', "\u0064\u0075\u0074\u0063\u0068\u002D\u0062\u0061\u006E\u0067\u006C\u0061", "\u09A1\u09BE\u099A\u0020\u09AC\u09BE\u0982\u09B2\u09BE", 'ডাচ-বাংলা', 'ডাচ বাংলা ব্যাংক']
+  }, {
+    "code": "\u0030\u0039\u0035",
+    '\u006E\u0061\u006D\u0065\u0073': ['eastern bank', "\u0065\u0062\u006C", 'ইস্টার্ন ব্যাংক', "\u0987\u09B8\u09CD\u099F\u09BE\u09B0\u09CD\u09A8"]
+  }, {
+    "code": '100',
+    "names": ["\u0065\u0078\u0069\u006D\u0020\u0062\u0061\u006E\u006B", 'exim', 'export import bank of bangladesh', "\u098F\u0995\u09CD\u09B8\u09BF\u09AE\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995", 'এক্সিম']
+  }, {
+    "code": '105',
+    "names": ["\u0066\u0073\u0069\u0062\u006C", 'first security islami bank', 'first security islamic bank', "\u0066\u0069\u0072\u0073\u0074\u0020\u0073\u0065\u0063\u0075\u0072\u0069\u0074\u0079", "\u09AB\u09BE\u09B0\u09CD\u09B8\u09CD\u099F\u0020\u09B8\u09BF\u0995\u09BF\u0989\u09B0\u09BF\u099F\u09BF\u0020\u0987\u09B8\u09B2\u09BE\u09AE\u09C0\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995", "\u09AB\u09BE\u09B0\u09CD\u09B8\u09CD\u099F\u0020\u09B8\u09BF\u0995\u09BF\u0989\u09B0\u09BF\u099F\u09BF"]
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0031\u0031\u0030",
+    "names": ["\u0068\u0061\u0062\u0069\u0062\u0020\u0062\u0061\u006E\u006B", "\u0068\u0062\u006C", "\u0068\u0061\u0062\u0069\u0062\u0020\u0062\u0061\u006E\u006B\u0020\u006C\u0074\u0064", 'হাবিব ব্যাংক']
+  }, {
+    "code": "\u0031\u0031\u0035",
+    "names": ['hsbc', 'hsbc bank', 'hongkong and shanghai banking']
+  }, {
+    "code": '120',
+    "names": ["\u0069\u0066\u0069\u0063\u0020\u0062\u0061\u006E\u006B", 'ific', "\u0986\u0987\u098F\u09AB\u0986\u0987\u09B8\u09BF\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995", "\u0986\u0987\u098F\u09AB\u0986\u0987\u09B8\u09BF"]
+  }, {
+    "code": '125',
+    "names": ['ibbl', "\u0069\u0073\u006C\u0061\u006D\u0069\u0020\u0062\u0061\u006E\u006B\u0020\u0062\u0061\u006E\u0067\u006C\u0061\u0064\u0065\u0073\u0068", "\u0069\u0073\u006C\u0061\u006D\u0069\u0020\u0062\u0061\u006E\u006B", "\u0069\u0073\u006C\u0061\u006D\u0069\u0063\u0020\u0062\u0061\u006E\u006B", 'ইসলামী ব্যাংক বাংলাদেশ', 'ইসলামী ব্যাংক']
+  }, {
+    "code": "\u0031\u0033\u0030",
+    "names": ['jamuna bank', 'যমুনা ব্যাংক']
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0031\u0033\u0035",
+    '\u006E\u0061\u006D\u0065\u0073': ['janata bank', "\u006A\u0061\u006E\u0061\u0074\u0061", "\u099C\u09A8\u09A4\u09BE\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995", "\u099C\u09A8\u09A4\u09BE"]
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0031\u0034\u0030",
+    '\u006E\u0061\u006D\u0065\u0073': ["\u006D\u0065\u0072\u0063\u0061\u006E\u0074\u0069\u006C\u0065\u0020\u0062\u0061\u006E\u006B", "\u006D\u0062\u006C", "\u09AE\u09BE\u09B0\u09CD\u0995\u09C7\u09A8\u09CD\u099F\u09BE\u0987\u09B2\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    '\u0063\u006F\u0064\u0065': '145',
+    '\u006E\u0061\u006D\u0065\u0073': ["\u006D\u0075\u0074\u0075\u0061\u006C\u0020\u0074\u0072\u0075\u0073\u0074\u0020\u0062\u0061\u006E\u006B", 'mtb', "\u006D\u0074\u0062\u006C", "\u09AE\u09BF\u0989\u099A\u09C1\u09AF\u09BC\u09BE\u09B2\u0020\u099F\u09CD\u09B0\u09BE\u09B8\u09CD\u099F\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    "code": '150',
+    "names": ['national bank', "\u006E\u0062\u006C", 'ন্যাশনাল ব্যাংক']
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0031\u0035\u0035",
+    "names": ['national bank of pakistan']
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0031\u0036\u0030",
+    '\u006E\u0061\u006D\u0065\u0073': ["\u006E\u0061\u0074\u0069\u006F\u006E\u0061\u006C\u0020\u0063\u0072\u0065\u0064\u0069\u0074\u0020\u0026\u0020\u0063\u006F\u006D\u006D\u0065\u0072\u0063\u0065\u0020\u0062\u0061\u006E\u006B", "\u006E\u0063\u0063\u0020\u0062\u0061\u006E\u006B", "\u006E\u0063\u0063\u0062", 'এনসিসি ব্যাংক', 'এনসিসি']
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0031\u0036\u0035",
+    "names": ["\u006F\u006E\u0065\u0020\u0062\u0061\u006E\u006B", "\u006F\u0062\u006C", 'ওয়ান ব্যাংক']
+  }, {
+    "code": "\u0031\u0037\u0030",
+    '\u006E\u0061\u006D\u0065\u0073': ["\u0070\u0072\u0069\u006D\u0065\u0020\u0062\u0061\u006E\u006B", 'prime', 'প্রাইম ব্যাংক', "\u09AA\u09CD\u09B0\u09BE\u0987\u09AE"]
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0031\u0037\u0035",
+    "names": ["\u0070\u0075\u0062\u0061\u006C\u0069\u0020\u0062\u0061\u006E\u006B", 'pubali', "\u09AA\u09C2\u09AC\u09BE\u09B2\u09C0\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995", 'পূবালী']
+  }, {
+    "code": "\u0031\u0038\u0030",
+    "names": ['rajshahi krishi unnayan bank', "\u0072\u0061\u006B\u0075\u0062", 'রাকাব', "\u09B0\u09BE\u099C\u09B6\u09BE\u09B9\u09C0\u0020\u0995\u09C3\u09B7\u09BF\u0020\u0989\u09A8\u09CD\u09A8\u09AF\u09BC\u09A8\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    "code": "\u0031\u0038\u0035",
+    '\u006E\u0061\u006D\u0065\u0073': ["\u0072\u0075\u0070\u0061\u006C\u0069\u0020\u0062\u0061\u006E\u006B", "\u0072\u0075\u0070\u0061\u006C\u0069", 'রূপালী ব্যাংক', 'রূপালী']
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0031\u0039\u0030",
+    '\u006E\u0061\u006D\u0065\u0073': ["\u0073\u006A\u0069\u0062\u006C", "\u0073\u0068\u0061\u0068\u006A\u0061\u006C\u0061\u006C\u0020\u0069\u0073\u006C\u0061\u006D\u0069\u0020\u0062\u0061\u006E\u006B", "\u0073\u0068\u0061\u0068\u006A\u0061\u006C\u0061\u006C", "\u09B6\u09BE\u09B9\u099C\u09BE\u09B2\u09BE\u09B2\u0020\u0987\u09B8\u09B2\u09BE\u09AE\u09C0\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995", "\u09B6\u09BE\u09B9\u099C\u09BE\u09B2\u09BE\u09B2"]
+  }, {
+    '\u0063\u006F\u0064\u0065': '195',
+    '\u006E\u0061\u006D\u0065\u0073': ["\u0073\u0069\u0062\u006C", 'social islami bank', "\u09B8\u09CB\u09B6\u09CD\u09AF\u09BE\u09B2\u0020\u0987\u09B8\u09B2\u09BE\u09AE\u09C0\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995", "\u09B8\u09CB\u09B6\u09CD\u09AF\u09BE\u09B2"]
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0032\u0030\u0030",
+    '\u006E\u0061\u006D\u0065\u0073': ['sonali bank', 'sonali', 'সোনালী ব্যাংক', 'সোনালী']
+  }, {
+    "code": "\u0032\u0030\u0035",
+    "names": ['southeast bank', "\u0073\u0065\u0062\u006C", "\u09B8\u09BE\u0989\u09A5\u0987\u09B8\u09CD\u099F\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    "code": '210',
+    '\u006E\u0061\u006D\u0065\u0073': ["\u0073\u0074\u0061\u006E\u0064\u0061\u0072\u0064\u0020\u0069\u0073\u006C\u0061\u006D\u0069\u0020\u0062\u0061\u006E\u006B", "\u0073\u0074\u0061\u006E\u0064\u0061\u0072\u0064\u0020\u0062\u0061\u006E\u006B", 'স্ট্যান্ডার্ড ব্যাংক', 'স্ট্যান্ডার্ড ইসলামী ব্যাংক']
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0032\u0031\u0035",
+    '\u006E\u0061\u006D\u0065\u0073': ["\u0073\u0074\u0061\u006E\u0064\u0061\u0072\u0064\u0020\u0063\u0068\u0061\u0072\u0074\u0065\u0072\u0065\u0064", "\u0073\u0063\u0062", "\u0073\u0074\u0061\u006E\u0064\u0061\u0072\u0064\u0020\u0063\u0068\u0061\u0072\u0074\u0065\u0072\u0065\u0064\u0020\u0062\u0061\u006E\u006B", "\u09B8\u09CD\u099F\u09CD\u09AF\u09BE\u09A8\u09CD\u09A1\u09BE\u09B0\u09CD\u09A1\u0020\u099A\u09BE\u09B0\u09CD\u099F\u09BE\u09B0\u09CD\u09A1"]
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0032\u0032\u0030",
+    '\u006E\u0061\u006D\u0065\u0073': ['state bank of india', "\u0073\u0062\u0069"]
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0032\u0032\u0035",
+    '\u006E\u0061\u006D\u0065\u0073': ['the city bank', 'city bank', "\u0063\u0062\u006C", "\u09B8\u09BF\u099F\u09BF\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    "code": '230',
+    '\u006E\u0061\u006D\u0065\u0073': ['icb islamic bank', "\u0069\u0063\u0062\u0020\u0069\u0073\u006C\u0061\u006D\u0069\u0063", "\u0069\u0063\u0062"]
+  }, {
+    "code": "\u0032\u0033\u0035",
+    '\u006E\u0061\u006D\u0065\u0073': ["\u0074\u0068\u0065\u0020\u0070\u0072\u0065\u006D\u0069\u0065\u0072\u0020\u0062\u0061\u006E\u006B", "\u0070\u0072\u0065\u006D\u0069\u0065\u0072\u0020\u0062\u0061\u006E\u006B", "\u09AA\u09CD\u09B0\u09BF\u09AE\u09BF\u09AF\u09BC\u09BE\u09B0\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    '\u0063\u006F\u0064\u0065': '240',
+    '\u006E\u0061\u006D\u0065\u0073': ["\u0074\u0072\u0075\u0073\u0074\u0020\u0062\u0061\u006E\u006B", 'tbl', 'ট্রাস্ট ব্যাংক']
+  }, {
+    "code": '245',
+    "names": ["\u0075\u006E\u0069\u0074\u0065\u0064\u0020\u0063\u006F\u006D\u006D\u0065\u0072\u0063\u0069\u0061\u006C\u0020\u0062\u0061\u006E\u006B", "\u0075\u0063\u0062", 'ucbl', 'ইউসিবি', "\u0987\u0989\u09A8\u09BE\u0987\u099F\u09C7\u09A1\u0020\u0995\u09AE\u09BE\u09B0\u09CD\u09B6\u09BF\u09AF\u09BC\u09BE\u09B2\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    "code": "\u0032\u0035\u0030",
+    '\u006E\u0061\u006D\u0065\u0073': ['uttara bank', "\u0989\u09A4\u09CD\u09A4\u09B0\u09BE\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    "code": "\u0032\u0035\u0035",
+    "names": ["\u0077\u006F\u006F\u0072\u0069\u0020\u0062\u0061\u006E\u006B", "\u0989\u09B0\u09BF\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    '\u0063\u006F\u0064\u0065': '260',
+    '\u006E\u0061\u006D\u0065\u0073': ['nrb commercial bank', "\u006E\u0072\u0062\u0063\u0020\u0062\u0061\u006E\u006B", "\u006E\u0072\u0062\u0063", "\u098F\u09A8\u0986\u09B0\u09AC\u09BF\u0020\u0995\u09AE\u09BE\u09B0\u09CD\u09B6\u09BF\u09AF\u09BC\u09BE\u09B2\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    "code": '265',
+    '\u006E\u0061\u006D\u0065\u0073': ["\u0075\u006E\u0069\u006F\u006E\u0020\u0062\u0061\u006E\u006B", 'ইউনিয়ন ব্যাংক']
+  }, {
+    "code": "\u0032\u0037\u0030",
+    '\u006E\u0061\u006D\u0065\u0073': ["\u0073\u0062\u0061\u0063\u0020\u0062\u0061\u006E\u006B", "\u0073\u006F\u0075\u0074\u0068\u0020\u0062\u0061\u006E\u0067\u006C\u0061\u0020\u0061\u0067\u0072\u0069\u0063\u0075\u006C\u0074\u0075\u0072\u0065", "\u098F\u09B8\u09AC\u09BF\u098F\u09B8\u09BF\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0032\u0037\u0035",
+    '\u006E\u0061\u006D\u0065\u0073': ["\u006D\u0065\u0067\u0068\u006E\u0061\u0020\u0062\u0061\u006E\u006B", 'মেঘনা ব্যাংক']
+  }, {
+    "code": '280',
+    "names": ["\u0070\u0061\u0064\u006D\u0061\u0020\u0062\u0061\u006E\u006B", "\u09AA\u09A6\u09CD\u09AE\u09BE\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    '\u0063\u006F\u0064\u0065': "\u0032\u0038\u0035",
+    '\u006E\u0061\u006D\u0065\u0073': ["\u006D\u0069\u0064\u006C\u0061\u006E\u0064\u0020\u0062\u0061\u006E\u006B", "\u09AE\u09BF\u09A1\u09B2\u09CD\u09AF\u09BE\u09A8\u09CD\u09A1\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    "code": '290',
+    '\u006E\u0061\u006D\u0065\u0073': ['nrb bank', 'এনআরবি ব্যাংক']
+  }, {
+    "code": "\u0032\u0039\u0035",
+    '\u006E\u0061\u006D\u0065\u0073': ["\u006D\u006F\u0064\u0068\u0075\u006D\u006F\u0074\u0069\u0020\u0062\u0061\u006E\u006B", "\u09AE\u09A7\u09C1\u09AE\u09A4\u09BF\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    "code": '300',
+    '\u006E\u0061\u006D\u0065\u0073': ['gibl', "\u0067\u006C\u006F\u0062\u0061\u006C\u0020\u0069\u0073\u006C\u0061\u006D\u0069\u0020\u0062\u0061\u006E\u006B", "\u0997\u09CD\u09B2\u09CB\u09AC\u09BE\u09B2\u0020\u0987\u09B8\u09B2\u09BE\u09AE\u09C0\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995", 'গ্লোবাল']
+  }, {
+    "code": '305',
+    "names": ['shimanto bank', 'সীমান্ত ব্যাংক']
+  }, {
+    "code": "\u0033\u0031\u0030",
+    '\u006E\u0061\u006D\u0065\u0073': ["\u0063\u006F\u006D\u006D\u0075\u006E\u0069\u0074\u0079\u0020\u0062\u0061\u006E\u006B\u0020\u0062\u0061\u006E\u0067\u006C\u0061\u0064\u0065\u0073\u0068", 'community bank', "\u0995\u09AE\u09BF\u0989\u09A8\u09BF\u099F\u09BF\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    '\u0063\u006F\u0064\u0065': '315',
+    '\u006E\u0061\u006D\u0065\u0073': ["\u0062\u0065\u006E\u0067\u0061\u006C\u0020\u0063\u006F\u006D\u006D\u0065\u0072\u0063\u0069\u0061\u006C\u0020\u0062\u0061\u006E\u006B", "\u09AC\u09C7\u0999\u09CD\u0997\u09B2\u0020\u0995\u09AE\u09BE\u09B0\u09CD\u09B6\u09BF\u09AF\u09BC\u09BE\u09B2\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }, {
+    '\u0063\u006F\u0064\u0065': '320',
+    "names": ["\u0063\u0069\u0074\u0069\u007A\u0065\u006E\u0073\u0020\u0062\u0061\u006E\u006B", "\u09B8\u09BF\u099F\u09BF\u099C\u09C7\u09A8\u09CD\u09B8\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995"]
+  }];
+  function _0xb898a(text) {
+    var _0x797dgf = (831104 ^ 831109) + (328289 ^ 328288);
+    const _0x73505f = _0x53b4cb(text);
+    _0x797dgf = (457033 ^ 457035) + (111449 ^ 111455);
+    if (!_0x73505f) return null;
+    let _0xg0b = null;
+    let _0xd3d;
+    let _0xddccd = 821165 ^ 821165;
+    _0xd3d = (206383 ^ 206375) + (868235 ^ 868235);
+    for (const _0xa1f2f of _0x6e_0x95a) {
+      for (const _0x10_0x280 of _0xa1f2f['\u006E\u0061\u006D\u0065\u0073']) {
+        let _0xa4b4a;
+        const aNorm = _0x53b4cb(_0x10_0x280);
+        _0xa4b4a = '\u0068\u006A\u0067\u0066\u006B\u006F';
+        const _0x7b5a3d = new RegExp(`\\b${aNorm}\\b`, "\u0069");
+        if (_0x7b5a3d['\u0074\u0065\u0073\u0074'](_0x73505f)) {
+          if ((aNorm === 'islami bank' || aNorm === 'islamic bank' || aNorm === "\u0987\u09B8\u09B2\u09BE\u09AE\u09C0\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995") && new RegExp("first security|fsibl|social|sibl|al arafah|al-arafah|aibl|shahjalal|sjibl|global|gibl|icb|\u09AB\u09BE\u09B0\u09CD\u09B8\u09CD\u099F \u09B8\u09BF\u0995\u09BF\u0989\u09B0\u09BF\u099F\u09BF|\u09B8\u09CB\u09B6\u09CD\u09AF\u09BE\u09B2|\u0986\u09B2 \u0986\u09B0\u09BE\u09AB\u09BE\u09B9|\u09B6\u09BE\u09B9\u099C\u09BE\u09B2\u09BE\u09B2", '\u0069')['\u0074\u0065\u0073\u0074'](_0x73505f)) {
             continue;
           }
-          const score = aNorm.length * 10;
-          if (score > bestScore) {
-            bestScore = score;
-            bestMatch = banksDb.find(b => b.c === item.code);
+          const score = aNorm['\u006C\u0065\u006E\u0067\u0074\u0068'] * (832215 ^ 832221);
+          if (score > _0xddccd) {
+            _0xddccd = score;
+            _0xg0b = _0x1c886d['\u0066\u0069\u006E\u0064'](b => b['\u0063'] === _0xa1f2f['\u0063\u006F\u0064\u0065']);
           }
         }
       }
     }
-
-    // 2. Check full database bank names and database aliases
-    for (const b of banksDb) {
-      const bNorm = normalizeStr(b.n).replace(/plc|ltd|limited|bank|ব্যাংক/gi, '').trim();
-      if (bNorm.length > 2 && new RegExp(`\\b${bNorm}\\b`, 'i').test(norm)) {
-        const score = bNorm.length * 10;
-        if (score > bestScore) {
-          bestScore = score;
-          bestMatch = b;
+    for (const b of _0x1c886d) {
+      const _0xcf1d3d = _0x53b4cb(b['\u006E'])['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0070\u006C\u0063\u007C\u006C\u0074\u0064\u007C\u006C\u0069\u006D\u0069\u0074\u0065\u0064\u007C\u0062\u0061\u006E\u006B\u007C\u09AC\u09CD\u09AF\u09BE\u0982\u0995', '\u0067\u0069'), '')['\u0074\u0072\u0069\u006D']();
+      if (_0xcf1d3d['\u006C\u0065\u006E\u0067\u0074\u0068'] > (549536 ^ 549538) && new RegExp(`\\b${_0xcf1d3d}\\b`, "\u0069")['\u0074\u0065\u0073\u0074'](_0x73505f)) {
+        const score = _0xcf1d3d['\u006C\u0065\u006E\u0067\u0074\u0068'] * (921624 ^ 921618);
+        if (score > _0xddccd) {
+          _0xddccd = score;
+          _0xg0b = b;
         }
       }
-      if (b.al) {
-        for (const a of b.al) {
-          const aNorm = normalizeStr(a).replace(/plc|ltd|limited|bank|ব্যাংক/gi, '').trim();
-          if (aNorm.length > 2 && new RegExp(`\\b${aNorm}\\b`, 'i').test(norm)) {
-            const score = aNorm.length * 10;
-            if (score > bestScore) {
-              bestScore = score;
-              bestMatch = b;
+      if (b['\u0061\u006C']) {
+        for (const a of b['\u0061\u006C']) {
+          const aNorm = _0x53b4cb(a)['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0070\u006C\u0063\u007C\u006C\u0074\u0064\u007C\u006C\u0069\u006D\u0069\u0074\u0065\u0064\u007C\u0062\u0061\u006E\u006B\u007C\u09AC\u09CD\u09AF\u09BE\u0982\u0995', '\u0067\u0069'), '')['\u0074\u0072\u0069\u006D']();
+          if (aNorm['\u006C\u0065\u006E\u0067\u0074\u0068'] > (824423 ^ 824421) && new RegExp(`\\b${aNorm}\\b`, "\u0069")['\u0074\u0065\u0073\u0074'](_0x73505f)) {
+            var _0x3686bc = (622108 ^ 622100) + (605973 ^ 605973);
+            const score = aNorm['\u006C\u0065\u006E\u0067\u0074\u0068'] * (350702 ^ 350692);
+            _0x3686bc = (284102 ^ 284101) + (853366 ^ 853362);
+            if (score > _0xddccd) {
+              _0xddccd = score;
+              _0xg0b = b;
             }
           }
         }
       }
     }
-
-    return bestMatch;
+    return _0xg0b;
   }
-
-  // --- SMART OFFLINE PARSER ---
-  function parseMessageOffline(rawText) {
-    if (!rawText || !rawText.trim()) return null;
-
-    const lines = rawText.split(/\r?\n/)
-      .map(l => cleanText(bengaliToLatinDigits(l)))
-      .filter(l => l && !isUnwantedText(l));
-
-    let detectedName = '';
-    let detectedBank = null;
-    let detectedBankName = '';
-    let detectedAcc = '';
-    let detectedBranchName = '';
-    let detectedDistrict = '';
-    let detectedThana = '';
-    let detectedRouting = '';
-
-    const consumed = new Set();
-
-    // Pre-pass: Lines with BOTH Bank and Account number (e.g. "DBBL 2161030966332")
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      const bankMatch = findBank(line);
-      const accMatch = line.match(/\b(\d{10,20})\b/);
-      if (bankMatch && accMatch) {
-        detectedBank = bankMatch;
-        detectedBankName = bankMatch.n;
-        detectedAcc = accMatch[1];
-        consumed.add(i);
+  function _0x1a012f(rawText) {
+    if (!rawText || !rawText['\u0074\u0072\u0069\u006D']()) return null;
+    const _0xfb9fa = rawText['\u0073\u0070\u006C\u0069\u0074'](new RegExp("\\r?\\n", ""))['\u006D\u0061\u0070'](l => _0x12efag(_0xea2dfb(l)))['\u0066\u0069\u006C\u0074\u0065\u0072'](l => l && !_0xa33a(l));
+    let _0xf991g = '';
+    var _0x738bb = (398164 ^ 398167) + (995005 ^ 995001);
+    let _0xb1272a = null;
+    _0x738bb = (473389 ^ 473386) + (517697 ^ 517696);
+    var _0x34812b = (591781 ^ 591789) + (400548 ^ 400546);
+    let _0xc772f = '';
+    _0x34812b = (925851 ^ 925851) + (294512 ^ 294512);
+    var _0xb6f6af = (553023 ^ 553014) + (697736 ^ 697738);
+    let _0xe159d = '';
+    _0xb6f6af = 759065 ^ 759070;
+    let _0xc7a;
+    let _0xf2_0x9a7 = '';
+    _0xc7a = '\u0063\u006B\u0070\u0068\u006F\u0065';
+    let _0x8a136c = '';
+    let _0x8d31b = '';
+    let _0x85c8c;
+    let _0xce39f = '';
+    _0x85c8c = (631210 ^ 631203) + (103384 ^ 103386);
+    var _0x31964d = (354694 ^ 354703) + (457731 ^ 457730);
+    const _0x12_0xf40 = new Set();
+    _0x31964d = 573945 ^ 573948;
+    for (let i = 909331 ^ 909331; i < _0xfb9fa['\u006C\u0065\u006E\u0067\u0074\u0068']; i++) {
+      let _0x7fbgd;
+      const line = _0xfb9fa[i];
+      _0x7fbgd = '\u006E\u0068\u0069\u006B\u006F\u0063';
+      const _0x13_0xfd9 = _0xb898a(line);
+      let _0xdc3b;
+      const accMatch = line['\u006D\u0061\u0074\u0063\u0068'](new RegExp("\\b(\\d{10,20})\\b", ""));
+      _0xdc3b = "cbjgni";
+      if (_0x13_0xfd9 && accMatch) {
+        _0xb1272a = _0x13_0xfd9;
+        _0xc772f = _0x13_0xfd9['\u006E'];
+        _0xe159d = accMatch[839497 ^ 839496];
+        _0x12_0xf40['\u0061\u0064\u0064'](i);
         break;
       }
     }
-
-    // Pre-pass 2: Lines with BOTH Account number and Branch (e.g. "No.20508370200078406 Guptachara Bazar Branch")
-    for (let i = 0; i < lines.length; i++) {
-      if (consumed.has(i)) continue;
-      const line = lines[i];
-      const accMatch = line.match(/(?:no\.?|acc\.?|a\/c\.?|\b)(\d{11,20})\b/i);
-      const branchWordMatch = line.match(/(?:branch|শাখা)/i);
-      if (accMatch && branchWordMatch) {
-        detectedAcc = accMatch[1];
-        let rest = line.replace(/(?:no\.?|acc\.?|a\/c\.?|\b)\d{11,20}\b/i, '').trim();
-        if (rest) detectedBranchName = rest;
-        consumed.add(i);
+    for (let i = 267448 ^ 267448; i < _0xfb9fa['\u006C\u0065\u006E\u0067\u0074\u0068']; i++) {
+      if (_0x12_0xf40['\u0068\u0061\u0073'](i)) continue;
+      const line = _0xfb9fa[i];
+      const accMatch = line['\u006D\u0061\u0074\u0063\u0068'](new RegExp("(?:no\\.?|acc\\.?|a\\/c\\.?|\\b)(\\d{11,20})\\b", '\u0069'));
+      const _0x14_0x561 = line['\u006D\u0061\u0074\u0063\u0068'](new RegExp('\u0028\u003F\u003A\u0062\u0072\u0061\u006E\u0063\u0068\u007C\u09B6\u09BE\u0996\u09BE\u0029', '\u0069'));
+      if (accMatch && _0x14_0x561) {
+        _0xe159d = accMatch[498976 ^ 498977];
+        let _0xa2a91a = line['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp("(?:no\\.?|acc\\.?|a\\/c\\.?|\\b)\\d{11,20}\\b", '\u0069'), '')['\u0074\u0072\u0069\u006D']();
+        if (_0xa2a91a) _0xf2_0x9a7 = _0xa2a91a;
+        _0x12_0xf40['\u0061\u0064\u0064'](i);
         break;
       }
     }
-
-    // Pass 1: Labeled Key-Value lines
-    for (let i = 0; i < lines.length; i++) {
-      if (consumed.has(i)) continue;
-      const line = lines[i];
-
-      // Routing Number label
-      if (/^(routing(\s*no|\s*number)?|রাউটিং(\s*নম্বর|\s*নং)?)\b/i.test(line)) {
-        const rMatch = line.match(/(\d{9})/);
-        if (rMatch) {
-          detectedRouting = rMatch[1];
-          consumed.add(i);
+    for (let i = 416664 ^ 416664; i < _0xfb9fa['\u006C\u0065\u006E\u0067\u0074\u0068']; i++) {
+      if (_0x12_0xf40['\u0068\u0061\u0073'](i)) continue;
+      var _0x_0xef7 = (467412 ^ 467415) + (680513 ^ 680514);
+      const line = _0xfb9fa[i];
+      _0x_0xef7 = '\u0062\u0065\u0066\u006A\u006C\u0070';
+      if (new RegExp('\u005E\u0028\u0072\u006F\u0075\u0074\u0069\u006E\u0067\u0028\u005C\u0073\u002A\u006E\u006F\u007C\u005C\u0073\u002A\u006E\u0075\u006D\u0062\u0065\u0072\u0029\u003F\u007C\u09B0\u09BE\u0989\u099F\u09BF\u0982\u0028\u005C\u0073\u002A\u09A8\u09AE\u09CD\u09AC\u09B0\u007C\u005C\u0073\u002A\u09A8\u0982\u0029\u003F\u0029\u005C\u0062', '\u0069')['\u0074\u0065\u0073\u0074'](line)) {
+        let _0x8c1a2g;
+        const _0xc41bd = line['\u006D\u0061\u0074\u0063\u0068'](new RegExp('\u0028\u005C\u0064\u007B\u0039\u007D\u0029', ""));
+        _0x8c1a2g = "bmlkcm";
+        if (_0xc41bd) {
+          _0xce39f = _0xc41bd[396889 ^ 396888];
+          _0x12_0xf40['\u0061\u0064\u0064'](i);
           continue;
-        } else if (i + 1 < lines.length && /^\d{9}$/.test(lines[i + 1])) {
-          detectedRouting = lines[i + 1];
-          consumed.add(i);
-          consumed.add(i + 1);
+        } else if (i + (214883 ^ 214882) < _0xfb9fa['\u006C\u0065\u006E\u0067\u0074\u0068'] && new RegExp('\u005E\u005C\u0064\u007B\u0039\u007D\u0024', "")['\u0074\u0065\u0073\u0074'](_0xfb9fa[i + (877770 ^ 877771)])) {
+          _0xce39f = _0xfb9fa[i + (596039 ^ 596038)];
+          _0x12_0xf40['\u0061\u0064\u0064'](i);
+          _0x12_0xf40['\u0061\u0064\u0064'](i + (110032 ^ 110033));
           i++;
           continue;
         }
       }
-
-      // Account Number label (supports 'Ac=', 'A/C:', 'Account No -', etc.)
-      if (/^(acc?(?:ount)?(?:\s*no|\s*number)?|a\/?c(?:\s*no)?|হিসাব(?:\s*নম্বর|\s*নং)?)\s*[:\-\/\u2013\u2014=]*/i.test(line)) {
-        const m = line.match(/(?:acc?(?:ount)?(?:\s*no|\s*number)?|a\/?c(?:\s*no)?|হিসাব(?:\s*নম্বর|\s*নং)?)\s*[:\-\/\u2013\u2014=]*\s*([\d\-\.]{8,25})/i);
+      if (new RegExp("^(acc?(?:ount)?(?:\\s*no|\\s*number)?|a\\/?c(?:\\s*no)?|\u09B9\u09BF\u09B8\u09BE\u09AC(?:\\s*\u09A8\u09AE\u09CD\u09AC\u09B0|\\s*\u09A8\u0982)?)\\s*[:\\-\\/\\u2013\\u2014=]*", '\u0069')['\u0074\u0065\u0073\u0074'](line)) {
+        const m = line['\u006D\u0061\u0074\u0063\u0068'](new RegExp('\u0028\u003F\u003A\u0061\u0063\u0063\u003F\u0028\u003F\u003A\u006F\u0075\u006E\u0074\u0029\u003F\u0028\u003F\u003A\u005C\u0073\u002A\u006E\u006F\u007C\u005C\u0073\u002A\u006E\u0075\u006D\u0062\u0065\u0072\u0029\u003F\u007C\u0061\u005C\u002F\u003F\u0063\u0028\u003F\u003A\u005C\u0073\u002A\u006E\u006F\u0029\u003F\u007C\u09B9\u09BF\u09B8\u09BE\u09AC\u0028\u003F\u003A\u005C\u0073\u002A\u09A8\u09AE\u09CD\u09AC\u09B0\u007C\u005C\u0073\u002A\u09A8\u0982\u0029\u003F\u0029\u005C\u0073\u002A\u005B\u003A\u005C\u002D\u005C\u002F\u005C\u0075\u0032\u0030\u0031\u0033\u005C\u0075\u0032\u0030\u0031\u0034\u003D\u005D\u002A\u005C\u0073\u002A\u0028\u005B\u005C\u0064\u005C\u002D\u005C\u002E\u005D\u007B\u0038\u002C\u0032\u0035\u007D\u0029', '\u0069'));
         if (m) {
-          detectedAcc = m[1].replace(/[^\d]/g, '');
-          consumed.add(i);
+          _0xe159d = m[155057 ^ 155056]['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u005B\u005E\u005C\u0064\u005D', '\u0067'), '');
+          _0x12_0xf40['\u0061\u0064\u0064'](i);
           continue;
-        } else if (i + 1 < lines.length && /^[\d\-\.]{8,25}$/.test(lines[i + 1])) {
-          detectedAcc = lines[i + 1].replace(/[^\d]/g, '');
-          consumed.add(i);
-          consumed.add(i + 1);
+        } else if (i + (743706 ^ 743707) < _0xfb9fa['\u006C\u0065\u006E\u0067\u0074\u0068'] && new RegExp("^[\\d\\-\\.]{8,25}$", "")['\u0074\u0065\u0073\u0074'](_0xfb9fa[i + (271329 ^ 271328)])) {
+          _0xe159d = _0xfb9fa[i + (780669 ^ 780668)]['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u005B\u005E\u005C\u0064\u005D', '\u0067'), '');
+          _0x12_0xf40['\u0061\u0064\u0064'](i);
+          _0x12_0xf40['\u0061\u0064\u0064'](i + (321483 ^ 321482));
           i++;
           continue;
         }
       }
-
-      // Account Name / Title label
-      if (/^(?:acc(?:ount)?\s*(?:title|name)|account\s*holder(?:\s*name)?|acc?\s*name|name|a\/?c\s*(?:title|name)|হিসাবের\s*নাম|হিসাবধারীর\s*নাম|নাম|beneficiary(?:\s*name)?)\s*[:\-\/\u2013\u2014=]*/i.test(line)) {
-        const isHeaderOnly = /^(?:acc(?:ount)?\s*(?:title|name)|account\s*holder(?:\s*name)?|acc?\s*name|name|a\/?c\s*(?:title|name)|হিসাবের\s*নাম|হিসাবধারীর\s*নাম|নাম|beneficiary(?:\s*name)?)\s*[:\-\/\u2013\u2014=]*$/i.test(line);
-        if (isHeaderOnly && i + 1 < lines.length) {
-          detectedName = lines[i + 1].trim();
-          consumed.add(i);
-          consumed.add(i + 1);
+      if (new RegExp('\u005E\u0028\u003F\u003A\u0061\u0063\u0063\u0028\u003F\u003A\u006F\u0075\u006E\u0074\u0029\u003F\u005C\u0073\u002A\u0028\u003F\u003A\u0074\u0069\u0074\u006C\u0065\u007C\u006E\u0061\u006D\u0065\u0029\u007C\u0061\u0063\u0063\u006F\u0075\u006E\u0074\u005C\u0073\u002A\u0068\u006F\u006C\u0064\u0065\u0072\u0028\u003F\u003A\u005C\u0073\u002A\u006E\u0061\u006D\u0065\u0029\u003F\u007C\u0061\u0063\u0063\u003F\u005C\u0073\u002A\u006E\u0061\u006D\u0065\u007C\u006E\u0061\u006D\u0065\u007C\u0061\u005C\u002F\u003F\u0063\u005C\u0073\u002A\u0028\u003F\u003A\u0074\u0069\u0074\u006C\u0065\u007C\u006E\u0061\u006D\u0065\u0029\u007C\u09B9\u09BF\u09B8\u09BE\u09AC\u09C7\u09B0\u005C\u0073\u002A\u09A8\u09BE\u09AE\u007C\u09B9\u09BF\u09B8\u09BE\u09AC\u09A7\u09BE\u09B0\u09C0\u09B0\u005C\u0073\u002A\u09A8\u09BE\u09AE\u007C\u09A8\u09BE\u09AE\u007C\u0062\u0065\u006E\u0065\u0066\u0069\u0063\u0069\u0061\u0072\u0079\u0028\u003F\u003A\u005C\u0073\u002A\u006E\u0061\u006D\u0065\u0029\u003F\u0029\u005C\u0073\u002A\u005B\u003A\u005C\u002D\u005C\u002F\u005C\u0075\u0032\u0030\u0031\u0033\u005C\u0075\u0032\u0030\u0031\u0034\u003D\u005D\u002A', '\u0069')['\u0074\u0065\u0073\u0074'](line)) {
+        let _0x301gf;
+        const isHeaderOnly = new RegExp("^(?:acc(?:ount)?\\s*(?:title|name)|account\\s*holder(?:\\s*name)?|acc?\\s*name|name|a\\/?c\\s*(?:title|name)|\u09B9\u09BF\u09B8\u09BE\u09AC\u09C7\u09B0\\s*\u09A8\u09BE\u09AE|\u09B9\u09BF\u09B8\u09BE\u09AC\u09A7\u09BE\u09B0\u09C0\u09B0\\s*\u09A8\u09BE\u09AE|\u09A8\u09BE\u09AE|beneficiary(?:\\s*name)?)\\s*[:\\-\\/\\u2013\\u2014=]*$", '\u0069')['\u0074\u0065\u0073\u0074'](line);
+        _0x301gf = 375201 ^ 375204;
+        if (isHeaderOnly && i + (890841 ^ 890840) < _0xfb9fa['\u006C\u0065\u006E\u0067\u0074\u0068']) {
+          _0xf991g = _0xfb9fa[i + (972139 ^ 972138)]['\u0074\u0072\u0069\u006D']();
+          _0x12_0xf40['\u0061\u0064\u0064'](i);
+          _0x12_0xf40['\u0061\u0064\u0064'](i + (558746 ^ 558747));
           i++;
           continue;
         } else {
-          const m = line.match(/^(?:acc(?:ount)?\s*(?:title|name)|account\s*holder(?:\s*name)?|acc?\s*name|name|a\/?c\s*(?:title|name)|হিসাবের\s*নাম|হিসাবধারীর\s*নাম|নাম|beneficiary(?:\s*name)?)\s*[:\-\/\u2013\u2014=]+\s*(.+)/i);
-          if (m && m[1].trim() && !/^[\d\-\.]+$/.test(m[1].trim())) {
-            detectedName = m[1].trim();
-            consumed.add(i);
+          const m = line['\u006D\u0061\u0074\u0063\u0068'](new RegExp('\u005E\u0028\u003F\u003A\u0061\u0063\u0063\u0028\u003F\u003A\u006F\u0075\u006E\u0074\u0029\u003F\u005C\u0073\u002A\u0028\u003F\u003A\u0074\u0069\u0074\u006C\u0065\u007C\u006E\u0061\u006D\u0065\u0029\u007C\u0061\u0063\u0063\u006F\u0075\u006E\u0074\u005C\u0073\u002A\u0068\u006F\u006C\u0064\u0065\u0072\u0028\u003F\u003A\u005C\u0073\u002A\u006E\u0061\u006D\u0065\u0029\u003F\u007C\u0061\u0063\u0063\u003F\u005C\u0073\u002A\u006E\u0061\u006D\u0065\u007C\u006E\u0061\u006D\u0065\u007C\u0061\u005C\u002F\u003F\u0063\u005C\u0073\u002A\u0028\u003F\u003A\u0074\u0069\u0074\u006C\u0065\u007C\u006E\u0061\u006D\u0065\u0029\u007C\u09B9\u09BF\u09B8\u09BE\u09AC\u09C7\u09B0\u005C\u0073\u002A\u09A8\u09BE\u09AE\u007C\u09B9\u09BF\u09B8\u09BE\u09AC\u09A7\u09BE\u09B0\u09C0\u09B0\u005C\u0073\u002A\u09A8\u09BE\u09AE\u007C\u09A8\u09BE\u09AE\u007C\u0062\u0065\u006E\u0065\u0066\u0069\u0063\u0069\u0061\u0072\u0079\u0028\u003F\u003A\u005C\u0073\u002A\u006E\u0061\u006D\u0065\u0029\u003F\u0029\u005C\u0073\u002A\u005B\u003A\u005C\u002D\u005C\u002F\u005C\u0075\u0032\u0030\u0031\u0033\u005C\u0075\u0032\u0030\u0031\u0034\u003D\u005D\u002B\u005C\u0073\u002A\u0028\u002E\u002B\u0029', '\u0069'));
+          if (m && m[391710 ^ 391711]['\u0074\u0072\u0069\u006D']() && !new RegExp('\u005E\u005B\u005C\u0064\u005C\u002D\u005C\u002E\u005D\u002B\u0024', "")['\u0074\u0065\u0073\u0074'](m[524264 ^ 524265]['\u0074\u0072\u0069\u006D']())) {
+            _0xf991g = m[335690 ^ 335691]['\u0074\u0072\u0069\u006D']();
+            _0x12_0xf40['\u0061\u0064\u0064'](i);
             continue;
           }
         }
       }
-
-      // District & Branch combined label (e.g. "Dist & Branch : Feni")
-      if (/^(dist(?:rict)?\s*&\s*branch)\s*[:\-\/\u2013\u2014]*/i.test(line)) {
-        const m = line.match(/^dist(?:rict)?\s*&\s*branch\s*[:\-\/\u2013\u2014]+\s*(.+)/i);
-        if (m && m[1].trim()) {
-          detectedBranchName = m[1].trim();
-          detectedDistrict = m[1].trim();
-          consumed.add(i);
+      if (new RegExp("^(dist(?:rict)?\\s*&\\s*branch)\\s*[:\\-\\/\\u2013\\u2014]*", '\u0069')['\u0074\u0065\u0073\u0074'](line)) {
+        const m = line['\u006D\u0061\u0074\u0063\u0068'](new RegExp('\u005E\u0064\u0069\u0073\u0074\u0028\u003F\u003A\u0072\u0069\u0063\u0074\u0029\u003F\u005C\u0073\u002A\u0026\u005C\u0073\u002A\u0062\u0072\u0061\u006E\u0063\u0068\u005C\u0073\u002A\u005B\u003A\u005C\u002D\u005C\u002F\u005C\u0075\u0032\u0030\u0031\u0033\u005C\u0075\u0032\u0030\u0031\u0034\u005D\u002B\u005C\u0073\u002A\u0028\u002E\u002B\u0029', '\u0069'));
+        if (m && m[799222 ^ 799223]['\u0074\u0072\u0069\u006D']()) {
+          _0xf2_0x9a7 = m[383998 ^ 383999]['\u0074\u0072\u0069\u006D']();
+          _0x8a136c = m[994408 ^ 994409]['\u0074\u0072\u0069\u006D']();
+          _0x12_0xf40['\u0061\u0064\u0064'](i);
           continue;
         }
       }
-
-      // District label
-      if (/^(district|জেলা)\b/i.test(line)) {
-        const m = line.match(/^(?:district|জেলা)\s*[:\-\/\u2013\u2014\s]\s*(.+)/i);
-        if (m && m[1].trim()) {
-          detectedDistrict = m[1].trim();
-          consumed.add(i);
+      if (new RegExp('\u005E\u0028\u0064\u0069\u0073\u0074\u0072\u0069\u0063\u0074\u007C\u099C\u09C7\u09B2\u09BE\u0029\u005C\u0062', '\u0069')['\u0074\u0065\u0073\u0074'](line)) {
+        const m = line['\u006D\u0061\u0074\u0063\u0068'](new RegExp("^(?:district|\u099C\u09C7\u09B2\u09BE)\\s*[:\\-\\/\\u2013\\u2014\\s]\\s*(.+)", '\u0069'));
+        if (m && m[224139 ^ 224138]['\u0074\u0072\u0069\u006D']()) {
+          _0x8a136c = m[853522 ^ 853523]['\u0074\u0072\u0069\u006D']();
+          _0x12_0xf40['\u0061\u0064\u0064'](i);
           continue;
         }
       }
-
-      // Thana label
-      if (/^(thana|থানা|upazila|উপজেলা)\b/i.test(line)) {
-        const m = line.match(/^(?:thana|থানা|upazila|উপজেলা)\s*[:\-\/\u2013\u2014\s]\s*(.+)/i);
-        if (m && m[1].trim()) {
-          detectedThana = m[1].trim();
-          consumed.add(i);
+      if (new RegExp("^(thana|\u09A5\u09BE\u09A8\u09BE|upazila|\u0989\u09AA\u099C\u09C7\u09B2\u09BE)\\b", '\u0069')['\u0074\u0065\u0073\u0074'](line)) {
+        const m = line['\u006D\u0061\u0074\u0063\u0068'](new RegExp('\u005E\u0028\u003F\u003A\u0074\u0068\u0061\u006E\u0061\u007C\u09A5\u09BE\u09A8\u09BE\u007C\u0075\u0070\u0061\u007A\u0069\u006C\u0061\u007C\u0989\u09AA\u099C\u09C7\u09B2\u09BE\u0029\u005C\u0073\u002A\u005B\u003A\u005C\u002D\u005C\u002F\u005C\u0075\u0032\u0030\u0031\u0033\u005C\u0075\u0032\u0030\u0031\u0034\u005C\u0073\u005D\u005C\u0073\u002A\u0028\u002E\u002B\u0029', '\u0069'));
+        if (m && m[675314 ^ 675315]['\u0074\u0072\u0069\u006D']()) {
+          _0x8d31b = m[992040 ^ 992041]['\u0074\u0072\u0069\u006D']();
+          _0x12_0xf40['\u0061\u0064\u0064'](i);
           continue;
         }
       }
-
-      // Branch label
-      if (/^(branch(?:\s*name)?|শাখার?\s*নাম|শাখা)\b/i.test(line)) {
-        const isHeaderOnly = /^(branch(?:\s*name)?|শাখার?\s*নাম|শাখা)\s*[:\-\/\u2013\u2014]*$/i.test(line);
-        if (isHeaderOnly && i + 1 < lines.length) {
-          detectedBranchName = lines[i + 1].trim();
-          consumed.add(i);
-          consumed.add(i + 1);
+      if (new RegExp('\u005E\u0028\u0062\u0072\u0061\u006E\u0063\u0068\u0028\u003F\u003A\u005C\u0073\u002A\u006E\u0061\u006D\u0065\u0029\u003F\u007C\u09B6\u09BE\u0996\u09BE\u09B0\u003F\u005C\u0073\u002A\u09A8\u09BE\u09AE\u007C\u09B6\u09BE\u0996\u09BE\u0029\u005C\u0062', '\u0069')['\u0074\u0065\u0073\u0074'](line)) {
+        var _0x6b44c = (339195 ^ 339197) + (335349 ^ 335357);
+        const isHeaderOnly = new RegExp('\u005E\u0028\u0062\u0072\u0061\u006E\u0063\u0068\u0028\u003F\u003A\u005C\u0073\u002A\u006E\u0061\u006D\u0065\u0029\u003F\u007C\u09B6\u09BE\u0996\u09BE\u09B0\u003F\u005C\u0073\u002A\u09A8\u09BE\u09AE\u007C\u09B6\u09BE\u0996\u09BE\u0029\u005C\u0073\u002A\u005B\u003A\u005C\u002D\u005C\u002F\u005C\u0075\u0032\u0030\u0031\u0033\u005C\u0075\u0032\u0030\u0031\u0034\u005D\u002A\u0024', '\u0069')['\u0074\u0065\u0073\u0074'](line);
+        _0x6b44c = "dodinp";
+        if (isHeaderOnly && i + (650587 ^ 650586) < _0xfb9fa['\u006C\u0065\u006E\u0067\u0074\u0068']) {
+          _0xf2_0x9a7 = _0xfb9fa[i + (104024 ^ 104025)]['\u0074\u0072\u0069\u006D']();
+          _0x12_0xf40['\u0061\u0064\u0064'](i);
+          _0x12_0xf40['\u0061\u0064\u0064'](i + (569047 ^ 569046));
           i++;
           continue;
         } else {
-          const m = line.match(/^(?:branch(?:\s*name)?|শাখার?\s*নাম|শাখা)\s*[:\-\/\u2013\u2014]*\s*(.+)/i);
-          if (m && m[1].trim()) {
-            detectedBranchName = m[1].trim();
-            consumed.add(i);
+          const m = line['\u006D\u0061\u0074\u0063\u0068'](new RegExp('\u005E\u0028\u003F\u003A\u0062\u0072\u0061\u006E\u0063\u0068\u0028\u003F\u003A\u005C\u0073\u002A\u006E\u0061\u006D\u0065\u0029\u003F\u007C\u09B6\u09BE\u0996\u09BE\u09B0\u003F\u005C\u0073\u002A\u09A8\u09BE\u09AE\u007C\u09B6\u09BE\u0996\u09BE\u0029\u005C\u0073\u002A\u005B\u003A\u005C\u002D\u005C\u002F\u005C\u0075\u0032\u0030\u0031\u0033\u005C\u0075\u0032\u0030\u0031\u0034\u005D\u002A\u005C\u0073\u002A\u0028\u002E\u002B\u0029', '\u0069'));
+          if (m && m[940368 ^ 940369]['\u0074\u0072\u0069\u006D']()) {
+            _0xf2_0x9a7 = m[150174 ^ 150175]['\u0074\u0072\u0069\u006D']();
+            _0x12_0xf40['\u0061\u0064\u0064'](i);
             continue;
           }
         }
       }
-
-      // Bank name label
-      if (/^(bank(?:\s*name)?|ব্যাংকের?\s*নাম|ব্যাংক)\b/i.test(line)) {
-        const m = line.match(/^(?:bank(?:\s*name)?|ব্যাংকের?\s*নাম|ব্যাংক)\s*[:\-\/\u2013\u2014]+\s*(.+)/i);
-        if (m && m[1].trim()) {
-          const b = findBank(m[1].trim());
+      if (new RegExp("^(bank(?:\\s*name)?|\u09AC\u09CD\u09AF\u09BE\u0982\u0995\u09C7\u09B0?\\s*\u09A8\u09BE\u09AE|\u09AC\u09CD\u09AF\u09BE\u0982\u0995)\\b", '\u0069')['\u0074\u0065\u0073\u0074'](line)) {
+        const m = line['\u006D\u0061\u0074\u0063\u0068'](new RegExp('\u005E\u0028\u003F\u003A\u0062\u0061\u006E\u006B\u0028\u003F\u003A\u005C\u0073\u002A\u006E\u0061\u006D\u0065\u0029\u003F\u007C\u09AC\u09CD\u09AF\u09BE\u0982\u0995\u09C7\u09B0\u003F\u005C\u0073\u002A\u09A8\u09BE\u09AE\u007C\u09AC\u09CD\u09AF\u09BE\u0982\u0995\u0029\u005C\u0073\u002A\u005B\u003A\u005C\u002D\u005C\u002F\u005C\u0075\u0032\u0030\u0031\u0033\u005C\u0075\u0032\u0030\u0031\u0034\u005D\u002B\u005C\u0073\u002A\u0028\u002E\u002B\u0029', '\u0069'));
+        if (m && m[482492 ^ 482493]['\u0074\u0072\u0069\u006D']()) {
+          const b = _0xb898a(m[921293 ^ 921292]['\u0074\u0072\u0069\u006D']());
           if (b) {
-            detectedBank = b;
-            detectedBankName = b.n;
+            _0xb1272a = b;
+            _0xc772f = b['\u006E'];
           } else {
-            detectedBankName = m[1].trim();
+            _0xc772f = m[138239 ^ 138238]['\u0074\u0072\u0069\u006D']();
           }
-          consumed.add(i);
+          _0x12_0xf40['\u0061\u0064\u0064'](i);
           continue;
         }
       }
     }
-
-    // Pass 2: Unlabeled Account Number
-    if (!detectedAcc) {
-      for (let i = 0; i < lines.length; i++) {
-        if (consumed.has(i)) continue;
-        const cleanDigits = lines[i].replace(/[^\d]/g, '');
-        if (cleanDigits.length >= 8 && cleanDigits.length <= 20) {
-          detectedAcc = cleanDigits;
-          consumed.add(i);
+    if (!_0xe159d) {
+      for (let i = 981120 ^ 981120; i < _0xfb9fa['\u006C\u0065\u006E\u0067\u0074\u0068']; i++) {
+        if (_0x12_0xf40['\u0068\u0061\u0073'](i)) continue;
+        var _0x6e4eac = (495887 ^ 495885) + (135057 ^ 135060);
+        const _0x313cd = _0xfb9fa[i]['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u005B\u005E\u005C\u0064\u005D', '\u0067'), '');
+        _0x6e4eac = (519986 ^ 519987) + (974909 ^ 974909);
+        if (_0x313cd['\u006C\u0065\u006E\u0067\u0074\u0068'] >= (730281 ^ 730273) && _0x313cd['\u006C\u0065\u006E\u0067\u0074\u0068'] <= (591162 ^ 591150)) {
+          _0xe159d = _0x313cd;
+          _0x12_0xf40['\u0061\u0064\u0064'](i);
           break;
         }
       }
     }
-
-    // Pass 3: Bank detection from remaining lines
-    if (!detectedBank) {
-      for (let i = 0; i < lines.length; i++) {
-        if (consumed.has(i)) continue;
-        const b = findBank(lines[i]);
+    if (!_0xb1272a) {
+      for (let i = 788720 ^ 788720; i < _0xfb9fa['\u006C\u0065\u006E\u0067\u0074\u0068']; i++) {
+        if (_0x12_0xf40['\u0068\u0061\u0073'](i)) continue;
+        const b = _0xb898a(_0xfb9fa[i]);
         if (b) {
-          detectedBank = b;
-          detectedBankName = b.n;
-          consumed.add(i);
+          _0xb1272a = b;
+          _0xc772f = b['\u006E'];
+          _0x12_0xf40['\u0061\u0064\u0064'](i);
           break;
         }
       }
     }
-
-    // Pass 4: Branch detection from remaining lines
-    if (!detectedBranchName) {
-      for (let i = 0; i < lines.length; i++) {
-        if (consumed.has(i)) continue;
-        const line = lines[i];
-        if (/branch|শাখা|sub-branch|উপশাখা/i.test(line)) {
-          detectedBranchName = line;
-          consumed.add(i);
+    if (!_0xf2_0x9a7) {
+      for (let i = 903050 ^ 903050; i < _0xfb9fa['\u006C\u0065\u006E\u0067\u0074\u0068']; i++) {
+        if (_0x12_0xf40['\u0068\u0061\u0073'](i)) continue;
+        let _0x75dg7e;
+        const line = _0xfb9fa[i];
+        _0x75dg7e = "cpjgcm";
+        if (new RegExp("branch|\u09B6\u09BE\u0996\u09BE|sub-branch|\u0989\u09AA\u09B6\u09BE\u0996\u09BE", '\u0069')['\u0074\u0065\u0073\u0074'](line)) {
+          _0xf2_0x9a7 = line;
+          _0x12_0xf40['\u0061\u0064\u0064'](i);
           break;
         }
       }
     }
-
-    // Pass 5: Account Holder Name detection from remaining lines
-    if (!detectedName) {
-      for (let i = 0; i < lines.length; i++) {
-        if (consumed.has(i)) continue;
-        const line = lines[i];
-        if (/^(md\.?|mohammad|mst\.?|mrs\.?|mr\.?|dr\.?|engr\.?|মো:|মুহাম্মদ)/i.test(line) ||
-            (/^[A-Za-z\s\.\u0980-\u09FF]{3,45}$/.test(line) && !/bank|branch|district|thana|chittagong|dhaka/i.test(line))) {
-          detectedName = line;
-          consumed.add(i);
+    if (!_0xf991g) {
+      for (let i = 321743 ^ 321743; i < _0xfb9fa['\u006C\u0065\u006E\u0067\u0074\u0068']; i++) {
+        if (_0x12_0xf40['\u0068\u0061\u0073'](i)) continue;
+        const line = _0xfb9fa[i];
+        if (new RegExp('\u005E\u0028\u006D\u0064\u005C\u002E\u003F\u007C\u006D\u006F\u0068\u0061\u006D\u006D\u0061\u0064\u007C\u006D\u0073\u0074\u005C\u002E\u003F\u007C\u006D\u0072\u0073\u005C\u002E\u003F\u007C\u006D\u0072\u005C\u002E\u003F\u007C\u0064\u0072\u005C\u002E\u003F\u007C\u0065\u006E\u0067\u0072\u005C\u002E\u003F\u007C\u09AE\u09CB\u003A\u007C\u09AE\u09C1\u09B9\u09BE\u09AE\u09CD\u09AE\u09A6\u0029', '\u0069')['\u0074\u0065\u0073\u0074'](line) || new RegExp("^[A-Za-z\\s\\.\\u0980-\\u09FF]{3,45}$", "")['\u0074\u0065\u0073\u0074'](line) && !new RegExp('\u0062\u0061\u006E\u006B\u007C\u0062\u0072\u0061\u006E\u0063\u0068\u007C\u0064\u0069\u0073\u0074\u0072\u0069\u0063\u0074\u007C\u0074\u0068\u0061\u006E\u0061\u007C\u0063\u0068\u0069\u0074\u0074\u0061\u0067\u006F\u006E\u0067\u007C\u0064\u0068\u0061\u006B\u0061', '\u0069')['\u0074\u0065\u0073\u0074'](line)) {
+          _0xf991g = line;
+          _0x12_0xf40['\u0061\u0064\u0064'](i);
           break;
         }
       }
     }
-
-    // Authoritative Routing Check: If 9-digit routing number is present,
-    // verify/override the bank using the first 3 digits (Bangladesh Bank Bank Code)
-    if (detectedRouting && detectedRouting.length === 9) {
-      const routingBankCode = detectedRouting.substring(0, 3);
-      const bankFromRt = banksDb.find(b => b.c === routingBankCode);
-      if (bankFromRt) {
-        detectedBank = bankFromRt;
-        detectedBankName = bankFromRt.n;
-
-        // If routing matches an exact branch, also extract its official branch name & district
-        const exactBr = bankFromRt.b.find(br => br[0] === detectedRouting);
-        if (exactBr) {
-          if (!detectedBranchName) detectedBranchName = exactBr[1];
-          if (!detectedDistrict) detectedDistrict = exactBr[2];
+    if (_0xce39f && _0xce39f['\u006C\u0065\u006E\u0067\u0074\u0068'] === (917633 ^ 917640)) {
+      const _0x4565gb = _0xce39f['\u0073\u0075\u0062\u0073\u0074\u0072\u0069\u006E\u0067'](329094 ^ 329094, 790908 ^ 790911);
+      const _0x1ab88f = _0x1c886d['\u0066\u0069\u006E\u0064'](b => b['\u0063'] === _0x4565gb);
+      if (_0x1ab88f) {
+        _0xb1272a = _0x1ab88f;
+        _0xc772f = _0x1ab88f['\u006E'];
+        const _0x2a617b = _0x1ab88f['\u0062']['\u0066\u0069\u006E\u0064'](br => br[877624 ^ 877624] === _0xce39f);
+        if (_0x2a617b) {
+          if (!_0xf2_0x9a7) _0xf2_0x9a7 = _0x2a617b[125057 ^ 125056];
+          if (!_0x8a136c) _0x8a136c = _0x2a617b[234185 ^ 234187];
         }
       }
     }
-
-    // Resolve routing number from detected bank & branch
-    const routingResult = resolveRoutingNumber(detectedBank, detectedBranchName, detectedDistrict, detectedThana);
-
+    const _0xe2_0x4e3 = _0x98825f(_0xb1272a, _0xf2_0x9a7, _0x8a136c, _0x8d31b);
     return {
-      name: detectedName,
-      bank: detectedBank,
-      bankName: detectedBank ? detectedBank.n : detectedBankName,
-      bankCode: detectedBank ? detectedBank.c : '',
-      accountNumber: detectedAcc,
-      branchName: detectedBranchName,
-      routingNumber: detectedRouting || routingResult.routing,
-      routingSource: detectedRouting ? 'মেসেজ থেকে প্রাপ্ত' : routingResult.source,
-      district: detectedDistrict || routingResult.district,
-      matchedBranch: routingResult.branch,
-      candidates: routingResult.candidates
+      '\u006E\u0061\u006D\u0065': _0xf991g,
+      '\u0062\u0061\u006E\u006B': _0xb1272a,
+      '\u0062\u0061\u006E\u006B\u004E\u0061\u006D\u0065': _0xb1272a ? _0xb1272a['\u006E'] : _0xc772f,
+      '\u0062\u0061\u006E\u006B\u0043\u006F\u0064\u0065': _0xb1272a ? _0xb1272a['\u0063'] : '',
+      '\u0061\u0063\u0063\u006F\u0075\u006E\u0074\u004E\u0075\u006D\u0062\u0065\u0072': _0xe159d,
+      "branchName": _0xf2_0x9a7,
+      "routingNumber": _0xce39f || _0xe2_0x4e3['\u0072\u006F\u0075\u0074\u0069\u006E\u0067'],
+      "routingSource": _0xce39f ? "\u09AE\u09C7\u09B8\u09C7\u099C\u0020\u09A5\u09C7\u0995\u09C7\u0020\u09AA\u09CD\u09B0\u09BE\u09AA\u09CD\u09A4" : _0xe2_0x4e3['\u0073\u006F\u0075\u0072\u0063\u0065'],
+      '\u0064\u0069\u0073\u0074\u0072\u0069\u0063\u0074': _0x8a136c || _0xe2_0x4e3['\u0064\u0069\u0073\u0074\u0072\u0069\u0063\u0074'],
+      "matchedBranch": _0xe2_0x4e3['\u0062\u0072\u0061\u006E\u0063\u0068'],
+      '\u0063\u0061\u006E\u0064\u0069\u0064\u0061\u0074\u0065\u0073': _0xe2_0x4e3['\u0063\u0061\u006E\u0064\u0069\u0064\u0061\u0074\u0065\u0073']
     };
   }
-
-  // Helper: Find exact routing number for bank + branch + district
-  function resolveRoutingNumber(bankObj, branchQuery, districtQuery, thanaQuery) {
+  function _0x98825f(bankObj, branchQuery, districtQuery, thanaQuery) {
     if (!bankObj) {
-      return { routing: '', source: '', district: '', branch: '', candidates: [] };
+      return {
+        "routing": '',
+        "source": '',
+        "district": '',
+        "branch": '',
+        '\u0063\u0061\u006E\u0064\u0069\u0064\u0061\u0074\u0065\u0073': []
+      };
     }
-
-    let specificQueries = [];
+    let _0xa4cd = [];
     if (branchQuery) {
-      if (!districtQuery && branchQuery.includes(',')) {
-        const parts = branchQuery.split(',').map(s => s.trim());
-        for (const part of parts) {
-          const pNorm = normalizeStr(part);
-          if (bankObj.b.some(br => {
-            const bDist = normalizeStr(br[2] || '');
-            return bDist === pNorm ||
-              (pNorm === 'bogura' && bDist === 'bogra') ||
-              (pNorm === 'bogra' && bDist === 'bogura') ||
-              (pNorm === 'chittagong' && bDist === 'chattogram') ||
-              (pNorm === 'comilla' && bDist === 'cumilla') ||
-              (pNorm === 'jessore' && bDist === 'jashore') ||
-              (pNorm === 'barisal' && bDist === 'barishal');
+      if (!districtQuery && branchQuery['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073']("\u002C")) {
+        var _0xd4394d = (751579 ^ 751571) + (373510 ^ 373510);
+        const parts = branchQuery['\u0073\u0070\u006C\u0069\u0074']("\u002C")['\u006D\u0061\u0070'](s => s['\u0074\u0072\u0069\u006D']());
+        _0xd4394d = '\u0069\u006F\u0068\u0062\u0070\u0068';
+        for (const _0x6daf of parts) {
+          const _0x56203e = _0x53b4cb(_0x6daf);
+          if (bankObj['\u0062']['\u0073\u006F\u006D\u0065'](br => {
+            var _0x5a14ff = (161510 ^ 161505) + (679387 ^ 679378);
+            const _0xb21c = _0x53b4cb(br[977322 ^ 977320] || '');
+            _0x5a14ff = (590218 ^ 590221) + (254582 ^ 254582);
+            return _0xb21c === _0x56203e || _0x56203e === "\u0062\u006F\u0067\u0075\u0072\u0061" && _0xb21c === "\u0062\u006F\u0067\u0072\u0061" || _0x56203e === 'bogra' && _0xb21c === 'bogura' || _0x56203e === 'chittagong' && _0xb21c === 'chattogram' || _0x56203e === "\u0063\u006F\u006D\u0069\u006C\u006C\u0061" && _0xb21c === "\u0063\u0075\u006D\u0069\u006C\u006C\u0061" || _0x56203e === 'jessore' && _0xb21c === 'jashore' || _0x56203e === "\u0062\u0061\u0072\u0069\u0073\u0061\u006C" && _0xb21c === "\u0062\u0061\u0072\u0069\u0073\u0068\u0061\u006C";
           })) {
-            districtQuery = part;
+            districtQuery = _0x6daf;
             break;
           }
         }
       }
-
-      // Split parts by comma or slash
-      const parts = branchQuery.split(/[,/]+/).map(p => p.trim()).filter(Boolean);
-      parts.forEach(part => {
-        let specific = part
-          .replace(/branch|শাখা|sub\s*branch|uposhakha|উপশাখা|sme|corporate|bazar|বাজার|market|মার্কেট|road|রোড/gi, '')
-          .trim();
-        if (specific.length > 2) specificQueries.push(specific);
-        let partClean = part.replace(/branch|শাখা|sub\s*branch|uposhakha|উপশাখা/gi, '').trim();
-        if (partClean.length > 2 && partClean !== specific) specificQueries.push(partClean);
+      const parts = branchQuery['\u0073\u0070\u006C\u0069\u0074'](new RegExp("[,/]+", ""))['\u006D\u0061\u0070'](p => p['\u0074\u0072\u0069\u006D']())['\u0066\u0069\u006C\u0074\u0065\u0072'](Boolean);
+      parts['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](part => {
+        let specific = part['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0062\u0072\u0061\u006E\u0063\u0068\u007C\u09B6\u09BE\u0996\u09BE\u007C\u0073\u0075\u0062\u005C\u0073\u002A\u0062\u0072\u0061\u006E\u0063\u0068\u007C\u0075\u0070\u006F\u0073\u0068\u0061\u006B\u0068\u0061\u007C\u0989\u09AA\u09B6\u09BE\u0996\u09BE\u007C\u0073\u006D\u0065\u007C\u0063\u006F\u0072\u0070\u006F\u0072\u0061\u0074\u0065\u007C\u0062\u0061\u007A\u0061\u0072\u007C\u09AC\u09BE\u099C\u09BE\u09B0\u007C\u006D\u0061\u0072\u006B\u0065\u0074\u007C\u09AE\u09BE\u09B0\u09CD\u0995\u09C7\u099F\u007C\u0072\u006F\u0061\u0064\u007C\u09B0\u09CB\u09A1', "gi"), '')['\u0074\u0072\u0069\u006D']();
+        if (specific['\u006C\u0065\u006E\u0067\u0074\u0068'] > (617445 ^ 617447)) _0xa4cd['\u0070\u0075\u0073\u0068'](specific);
+        var _0xc195b = (362347 ^ 362346) + (610038 ^ 610033);
+        let _0x04egf = part['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0062\u0072\u0061\u006E\u0063\u0068\u007C\u09B6\u09BE\u0996\u09BE\u007C\u0073\u0075\u0062\u005C\u0073\u002A\u0062\u0072\u0061\u006E\u0063\u0068\u007C\u0075\u0070\u006F\u0073\u0068\u0061\u006B\u0068\u0061\u007C\u0989\u09AA\u09B6\u09BE\u0996\u09BE', "gi"), '')['\u0074\u0072\u0069\u006D']();
+        _0xc195b = '\u0062\u0066\u006D\u0064\u0069\u0063';
+        if (_0x04egf['\u006C\u0065\u006E\u0067\u0074\u0068'] > (602209 ^ 602211) && _0x04egf !== specific) _0xa4cd['\u0070\u0075\u0073\u0068'](_0x04egf);
       });
-
-      let specific = branchQuery
-        .replace(/branch|শাখা|sub\s*branch|uposhakha|উপশাখা|sme|corporate|bazar|বাজার|market|মার্কেট|road|রোড/gi, '')
-        .trim();
-      if (specific.length > 2 && !specificQueries.includes(specific)) specificQueries.push(specific);
-      specificQueries.push(branchQuery.replace(/branch|শাখা|sub\s*branch|uposhakha|উপশাখা/gi, '').trim());
-
-      const words = branchQuery.split(/[\s,]+/).filter(Boolean);
-      if (words.length > 1) {
-        specificQueries.push(words[0]);
-        specificQueries.push(words[words.length - 1]);
+      var _0x1bb4e = (232865 ^ 232871) + (167607 ^ 167600);
+      let specific = branchQuery['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0062\u0072\u0061\u006E\u0063\u0068\u007C\u09B6\u09BE\u0996\u09BE\u007C\u0073\u0075\u0062\u005C\u0073\u002A\u0062\u0072\u0061\u006E\u0063\u0068\u007C\u0075\u0070\u006F\u0073\u0068\u0061\u006B\u0068\u0061\u007C\u0989\u09AA\u09B6\u09BE\u0996\u09BE\u007C\u0073\u006D\u0065\u007C\u0063\u006F\u0072\u0070\u006F\u0072\u0061\u0074\u0065\u007C\u0062\u0061\u007A\u0061\u0072\u007C\u09AC\u09BE\u099C\u09BE\u09B0\u007C\u006D\u0061\u0072\u006B\u0065\u0074\u007C\u09AE\u09BE\u09B0\u09CD\u0995\u09C7\u099F\u007C\u0072\u006F\u0061\u0064\u007C\u09B0\u09CB\u09A1', "gi"), '')['\u0074\u0072\u0069\u006D']();
+      _0x1bb4e = '\u0068\u006D\u0063\u0061\u0070\u0070';
+      if (specific['\u006C\u0065\u006E\u0067\u0074\u0068'] > (830429 ^ 830431) && !_0xa4cd['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](specific)) _0xa4cd['\u0070\u0075\u0073\u0068'](specific);
+      _0xa4cd['\u0070\u0075\u0073\u0068'](branchQuery['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0062\u0072\u0061\u006E\u0063\u0068\u007C\u09B6\u09BE\u0996\u09BE\u007C\u0073\u0075\u0062\u005C\u0073\u002A\u0062\u0072\u0061\u006E\u0063\u0068\u007C\u0075\u0070\u006F\u0073\u0068\u0061\u006B\u0068\u0061\u007C\u0989\u09AA\u09B6\u09BE\u0996\u09BE', '\u0067\u0069'), '')['\u0074\u0072\u0069\u006D']());
+      var _0x479a6g = (244996 ^ 244997) + (818523 ^ 818523);
+      const _0x53ddfa = branchQuery['\u0073\u0070\u006C\u0069\u0074'](new RegExp('\u005B\u005C\u0073\u002C\u005D\u002B', ""))['\u0066\u0069\u006C\u0074\u0065\u0072'](Boolean);
+      _0x479a6g = (642225 ^ 642228) + (477508 ^ 477510);
+      if (_0x53ddfa['\u006C\u0065\u006E\u0067\u0074\u0068'] > (868794 ^ 868795)) {
+        _0xa4cd['\u0070\u0075\u0073\u0068'](_0x53ddfa[660558 ^ 660558]);
+        _0xa4cd['\u0070\u0075\u0073\u0068'](_0x53ddfa[_0x53ddfa['\u006C\u0065\u006E\u0067\u0074\u0068'] - (228567 ^ 228566)]);
       }
     }
-
-    if (thanaQuery) specificQueries.push(thanaQuery);
-    if (districtQuery && !specificQueries.length) specificQueries.push(districtQuery);
-
-    const distNorm = normalizeStr(districtQuery);
-    let candidates = [];
-
-    for (const q of specificQueries) {
-      const qNorm = normalizeStr(q);
-      if (!qNorm || qNorm.length < 2) continue;
-      const qPhonetic = toPhonetic(qNorm);
-
-      bankObj.b.forEach(br => {
+    if (thanaQuery) _0xa4cd['\u0070\u0075\u0073\u0068'](thanaQuery);
+    if (districtQuery && !_0xa4cd['\u006C\u0065\u006E\u0067\u0074\u0068']) _0xa4cd['\u0070\u0075\u0073\u0068'](districtQuery);
+    var _0x124dec = (373465 ^ 373457) + (430877 ^ 430868);
+    const _0xaed46d = _0x53b4cb(districtQuery);
+    _0x124dec = "hlijcl";
+    let _0x262faa;
+    let _0x933a = [];
+    _0x262faa = 403087 ^ 403081;
+    for (const q of _0xa4cd) {
+      var _0xaaeedf = (741659 ^ 741658) + (900519 ^ 900513);
+      const _0x4c39bd = _0x53b4cb(q);
+      _0xaaeedf = (436036 ^ 436036) + (664526 ^ 664525);
+      if (!_0x4c39bd || _0x4c39bd['\u006C\u0065\u006E\u0067\u0074\u0068'] < (995617 ^ 995619)) continue;
+      let _0xa15g9c;
+      const _0x8e5afd = _0xe7b(_0x4c39bd);
+      _0xa15g9c = (247406 ^ 247401) + (744889 ^ 744881);
+      bankObj['\u0062']['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](br => {
         const [rNum, bName, brDist, aliases] = br;
-        const bNorm = normalizeStr(bName).replace(/branch|শাখা/gi, '').trim();
-        const branchDistNorm = normalizeStr(brDist || '').trim();
-        const altNorms = (aliases || []).map(a => normalizeStr(a).replace(/branch|শাখা/gi, '').trim());
-
-        const isDistMatch = distNorm && (
-          branchDistNorm === distNorm ||
-          branchDistNorm.includes(distNorm) ||
-          distNorm.includes(branchDistNorm) ||
-          (distNorm === 'chittagong' && branchDistNorm === 'chattogram') ||
-          (distNorm === 'comilla' && branchDistNorm === 'cumilla') ||
-          (distNorm === 'bogra' && branchDistNorm === 'bogura') ||
-          (distNorm === 'jessore' && branchDistNorm === 'jashore') ||
-          (distNorm === 'barisal' && branchDistNorm === 'barishal')
-        );
-
-        if (distNorm && !isDistMatch) return;
-
-        let score = 0;
-        if (bNorm === qNorm) score = 100;
-        else if (altNorms.includes(qNorm)) score = 95;
-        else if (bNorm.includes(qNorm) || qNorm.includes(bNorm)) score = 85;
-        else if (altNorms.some(a => a.includes(qNorm) || qNorm.includes(a))) score = 80;
-        else if (branchDistNorm === qNorm) score = 75;
-        else if (toPhonetic(bNorm) === qPhonetic) score = 75;
-        else {
-          // Fuzzy transliteration similarity (e.g. Digpait vs DIGPITE, Ashulia vs Asulia)
-          const sim = stringSimilarity(bNorm, qNorm);
-          const pSim = stringSimilarity(toPhonetic(bNorm), qPhonetic);
-          const maxSim = Math.max(sim, pSim);
-          if (maxSim >= 0.65) {
-            score = Math.round(maxSim * 68);
+        var _0x69f63d = (980098 ^ 980100) + (352238 ^ 352232);
+        const _0xae2c = _0x53b4cb(bName)['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0062\u0072\u0061\u006E\u0063\u0068\u007C\u09B6\u09BE\u0996\u09BE', '\u0067\u0069'), '')['\u0074\u0072\u0069\u006D']();
+        _0x69f63d = '\u0064\u006E\u0063\u006C\u0066\u0066';
+        var _0x622e2f = (169084 ^ 169084) + (684829 ^ 684821);
+        const branchDistNorm = _0x53b4cb(brDist || '')['\u0074\u0072\u0069\u006D']();
+        _0x622e2f = "pllbgb";
+        const _0x49a = (aliases || [])['\u006D\u0061\u0070'](a => _0x53b4cb(a)['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp("branch|\u09B6\u09BE\u0996\u09BE", "gi"), '')['\u0074\u0072\u0069\u006D']());
+        var _0x898eb = (954155 ^ 954155) + (937567 ^ 937566);
+        const _0xe75e7e = _0xaed46d && (branchDistNorm === _0xaed46d || branchDistNorm['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](_0xaed46d) || _0xaed46d['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](branchDistNorm) || _0xaed46d === "\u0063\u0068\u0069\u0074\u0074\u0061\u0067\u006F\u006E\u0067" && branchDistNorm === 'chattogram' || _0xaed46d === 'comilla' && branchDistNorm === "\u0063\u0075\u006D\u0069\u006C\u006C\u0061" || _0xaed46d === "\u0062\u006F\u0067\u0072\u0061" && branchDistNorm === 'bogura' || _0xaed46d === "\u006A\u0065\u0073\u0073\u006F\u0072\u0065" && branchDistNorm === "\u006A\u0061\u0073\u0068\u006F\u0072\u0065" || _0xaed46d === "\u0062\u0061\u0072\u0069\u0073\u0061\u006C" && branchDistNorm === "\u0062\u0061\u0072\u0069\u0073\u0068\u0061\u006C");
+        _0x898eb = (802153 ^ 802154) + (733793 ^ 733795);
+        if (_0xaed46d && !_0xe75e7e) return;
+        var _0xd77d = (270067 ^ 270068) + (584385 ^ 584385);
+        let _0xc54ad = 951992 ^ 951992;
+        _0xd77d = (130808 ^ 130801) + (473821 ^ 473816);
+        if (_0xae2c === _0x4c39bd) _0xc54ad = 881216 ^ 881188;else if (_0x49a['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](_0x4c39bd)) _0xc54ad = 404621 ^ 404690;else if (_0xae2c['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](_0x4c39bd) || _0x4c39bd['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](_0xae2c)) _0xc54ad = 156502 ^ 156419;else if (_0x49a['\u0073\u006F\u006D\u0065'](a => a['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](_0x4c39bd) || _0x4c39bd['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](a))) _0xc54ad = 660581 ^ 660533;else if (branchDistNorm === _0x4c39bd) _0xc54ad = 779715 ^ 779656;else if (_0xe7b(_0xae2c) === _0x8e5afd) _0xc54ad = 509871 ^ 509924;else {
+          let _0x6688fd;
+          const _0x50acbe = _0x6a12c(_0xae2c, _0x4c39bd);
+          _0x6688fd = 670261 ^ 670268;
+          var _0x8edadf = (818744 ^ 818744) + (643555 ^ 643563);
+          const _0x69fb = _0x6a12c(_0xe7b(_0xae2c), _0x8e5afd);
+          _0x8edadf = (259908 ^ 259909) + (580777 ^ 580769);
+          var _0x3b_0x946 = (985558 ^ 985554) + (536310 ^ 536319);
+          const _0x0226af = Math['\u006D\u0061\u0078'](_0x50acbe, _0x69fb);
+          _0x3b_0x946 = (967969 ^ 967977) + (544934 ^ 544943);
+          if (_0x0226af >= 0.65) {
+            _0xc54ad = Math['\u0072\u006F\u0075\u006E\u0064'](_0x0226af * (412886 ^ 412818));
           }
         }
-
-        if (score > 0) {
-          if (isDistMatch) score += 20;
-          candidates.push({
-            routing: rNum,
-            name: bName,
-            district: brDist,
-            score
+        if (_0xc54ad > (343700 ^ 343700)) {
+          if (_0xe75e7e) _0xc54ad += 222396 ^ 222376;
+          _0x933a['\u0070\u0075\u0073\u0068']({
+            "routing": rNum,
+            '\u006E\u0061\u006D\u0065': bName,
+            "district": brDist,
+            "score": _0xc54ad
           });
         }
       });
-
-      if (candidates.length > 0) break;
+      if (_0x933a['\u006C\u0065\u006E\u0067\u0074\u0068'] > (782773 ^ 782773)) break;
     }
-
-    // Fallback for sub-branches: If no candidate matched by branch name, but district is known and bank only has 1 branch in that district
-    if (!candidates.length && distNorm) {
-      const distBranches = bankObj.b.filter(br => {
-        const branchDistNorm = normalizeStr(br[2] || '').trim();
-        return branchDistNorm === distNorm ||
-          (distNorm === 'bogra' && branchDistNorm === 'bogura') ||
-          (distNorm === 'bogura' && branchDistNorm === 'bogra') ||
-          (distNorm === 'chittagong' && branchDistNorm === 'chattogram') ||
-          (distNorm === 'comilla' && branchDistNorm === 'cumilla') ||
-          (distNorm === 'jessore' && branchDistNorm === 'jashore') ||
-          (distNorm === 'barisal' && branchDistNorm === 'barishal');
+    if (!_0x933a['\u006C\u0065\u006E\u0067\u0074\u0068'] && _0xaed46d) {
+      let _0x96b3f;
+      const _0xe_0xd58 = bankObj['\u0062']['\u0066\u0069\u006C\u0074\u0065\u0072'](br => {
+        const branchDistNorm = _0x53b4cb(br[165051 ^ 165049] || '')['\u0074\u0072\u0069\u006D']();
+        return branchDistNorm === _0xaed46d || _0xaed46d === 'bogra' && branchDistNorm === 'bogura' || _0xaed46d === "\u0062\u006F\u0067\u0075\u0072\u0061" && branchDistNorm === "\u0062\u006F\u0067\u0072\u0061" || _0xaed46d === "\u0063\u0068\u0069\u0074\u0074\u0061\u0067\u006F\u006E\u0067" && branchDistNorm === 'chattogram' || _0xaed46d === "\u0063\u006F\u006D\u0069\u006C\u006C\u0061" && branchDistNorm === 'cumilla' || _0xaed46d === "\u006A\u0065\u0073\u0073\u006F\u0072\u0065" && branchDistNorm === "\u006A\u0061\u0073\u0068\u006F\u0072\u0065" || _0xaed46d === 'barisal' && branchDistNorm === 'barishal';
       });
-      if (distBranches.length === 1) {
-        candidates.push({
-          routing: distBranches[0][0],
-          name: distBranches[0][1],
-          district: distBranches[0][2],
-          score: 75
+      _0x96b3f = "bjbggk";
+      if (_0xe_0xd58['\u006C\u0065\u006E\u0067\u0074\u0068'] === (442799 ^ 442798)) {
+        _0x933a['\u0070\u0075\u0073\u0068']({
+          '\u0072\u006F\u0075\u0074\u0069\u006E\u0067': _0xe_0xd58[744411 ^ 744411][776426 ^ 776426],
+          '\u006E\u0061\u006D\u0065': _0xe_0xd58[190007 ^ 190007][300812 ^ 300813],
+          '\u0064\u0069\u0073\u0074\u0072\u0069\u0063\u0074': _0xe_0xd58[710195 ^ 710195][180765 ^ 180767],
+          '\u0073\u0063\u006F\u0072\u0065': 75
         });
       }
     }
-
-    candidates.sort((a, b) => b.score - a.score);
-
+    _0x933a['\u0073\u006F\u0072\u0074']((a, b) => b['\u0073\u0063\u006F\u0072\u0065'] - a['\u0073\u0063\u006F\u0072\u0065']);
     return {
-      routing: candidates.length ? candidates[0].routing : '',
-      source: 'অটো-ডিটেক্টেড ✓',
-      district: candidates.length ? candidates[0].district : '',
-      branch: candidates.length ? candidates[0].name : '',
-      candidates: candidates
+      "routing": _0x933a['\u006C\u0065\u006E\u0067\u0074\u0068'] ? _0x933a[237801 ^ 237801]['\u0072\u006F\u0075\u0074\u0069\u006E\u0067'] : '',
+      '\u0073\u006F\u0075\u0072\u0063\u0065': 'অটো-ডিটেক্টেড ✓',
+      "district": _0x933a['\u006C\u0065\u006E\u0067\u0074\u0068'] ? _0x933a[616155 ^ 616155]['\u0064\u0069\u0073\u0074\u0072\u0069\u0063\u0074'] : '',
+      '\u0062\u0072\u0061\u006E\u0063\u0068': _0x933a['\u006C\u0065\u006E\u0067\u0074\u0068'] ? _0x933a[952975 ^ 952975]['\u006E\u0061\u006D\u0065'] : '',
+      '\u0063\u0061\u006E\u0064\u0069\u0064\u0061\u0074\u0065\u0073': _0x933a
     };
   }
-
-  // --- GEMINI AI PARSER ---
-  async function parseWithGeminiAI(rawText) {
-    if (!geminiApiKey) {
-      openAiModal();
-      showToast('অনুগ্রহ করে প্রথমে আপনার ফ্রি Gemini API Key দিন!', 'error');
+  async function _0x32g23a(rawText) {
+    if (!_0xcde) {
+      _0x496c1b();
+      _0xc3ae('অনুগ্রহ করে প্রথমে আপনার ফ্রি Gemini API Key দিন!', 'error');
       return null;
     }
-
-    const systemPrompt = `You are a specialized Bangladeshi banking data extractor and routing lookup expert.
+    const _0xdbd0f = `You are a specialized Bangladeshi banking data extractor and routing lookup expert.
 Extract the banking fields from the customer message into JSON.
 Refer to official Bangladesh Bank directory and banksbd.org knowledge base for Bangladesh routing numbers.
 RULES:
@@ -760,894 +870,805 @@ RULES:
    - "branchName": Specific branch, sub-branch or area (e.g. "Joypurhat", "PARBOTIPUR", "Ashulia", "Digpait", "Guptachara Bazar", "Burichang", "Mymensingh", "Feni").
    - "district": District name if mentioned or known (e.g. "Jamalpur", "Joypurhat", "Dinajpur", "Dhaka", "Chittagong", "Feni", "Cumilla").
    - "routingNumber": 9-digit official routing number (look up from banksbd.org/Bangladesh Bank directory if known for this bank & branch, or extract from message), otherwise null.`;
-
-    const requestBody = {
-      contents: [
-        {
-          parts: [
-            { text: `${systemPrompt}\n\nCustomer message to extract:\n\"\"\"\n${rawText}\n\"\"\"` }
-          ]
-        }
-      ],
-      generationConfig: {
-        responseMimeType: "application/json",
-        temperature: 0.1
+    var _0x2_0xbf8 = (260786 ^ 260795) + (994860 ^ 994862);
+    const _0x37ff = {
+      '\u0063\u006F\u006E\u0074\u0065\u006E\u0074\u0073': [{
+        '\u0070\u0061\u0072\u0074\u0073': [{
+          '\u0074\u0065\u0078\u0074': `${_0xdbd0f}\n\nCustomer message to extract:\n\"\"\"\n${rawText}\n\"\"\"`
+        }]
+      }],
+      '\u0067\u0065\u006E\u0065\u0072\u0061\u0074\u0069\u006F\u006E\u0043\u006F\u006E\u0066\u0069\u0067': {
+        "responseMimeType": "application/json",
+        "temperature": 0.1
       }
     };
-
-    // Use latest Gemini models: gemini-3.8-flash first, followed by available fallbacks
-    const models = [
-      'gemini-3.8-flash',
-      'gemini-3.7-flash',
-      'gemini-3.5-flash-lite',
-      'gemini-3.5-flash',
-      'gemini-2.5-flash'
-    ];
-    let lastError = null;
-
-    for (const model of models) {
+    _0x2_0xbf8 = (949082 ^ 949074) + (658016 ^ 658019);
+    const _0x59c45a = ["\u0067\u0065\u006D\u0069\u006E\u0069\u002D\u0033\u002E\u0038\u002D\u0066\u006C\u0061\u0073\u0068", "\u0067\u0065\u006D\u0069\u006E\u0069\u002D\u0033\u002E\u0037\u002D\u0066\u006C\u0061\u0073\u0068", "\u0067\u0065\u006D\u0069\u006E\u0069\u002D\u0033\u002E\u0035\u002D\u0066\u006C\u0061\u0073\u0068\u002D\u006C\u0069\u0074\u0065", "\u0067\u0065\u006D\u0069\u006E\u0069\u002D\u0033\u002E\u0035\u002D\u0066\u006C\u0061\u0073\u0068", 'gemini-2.5-flash'];
+    let _0x54c4bf = null;
+    for (const _0x75191e of _0x59c45a) {
       try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(geminiApiKey)}`;
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(requestBody)
+        var _0x815c = (310369 ^ 310375) + (344420 ^ 344421);
+        const _0xbeabee = `https://generativelanguage.googleapis.com/v1beta/models/${_0x75191e}:generateContent?key=${encodeURIComponent(_0xcde)}`;
+        _0x815c = 249015 ^ 249022;
+        const _0xefab = await fetch(_0xbeabee, {
+          '\u006D\u0065\u0074\u0068\u006F\u0064': "\u0050\u004F\u0053\u0054",
+          "headers": {
+            'Content-Type': "\u0061\u0070\u0070\u006C\u0069\u0063\u0061\u0074\u0069\u006F\u006E\u002F\u006A\u0073\u006F\u006E"
+          },
+          '\u0062\u006F\u0064\u0079': JSON['\u0073\u0074\u0072\u0069\u006E\u0067\u0069\u0066\u0079'](_0x37ff)
         });
-
-        if (!response.ok) {
-          const errData = await response.json().catch(() => ({}));
-          throw new Error(errData.error?.message || `HTTP error ${response.status}`);
+        if (!_0xefab['\u006F\u006B']) {
+          let _0x43ce7g;
+          const _0x23cgd = await _0xefab['\u006A\u0073\u006F\u006E']()['\u0063\u0061\u0074\u0063\u0068'](() => ({}));
+          _0x43ce7g = (195577 ^ 195580) + (871602 ^ 871606);
+          throw new Error(_0x23cgd['\u0065\u0072\u0072\u006F\u0072']?.message || `HTTP error ${_0xefab['\u0073\u0074\u0061\u0074\u0075\u0073']}`);
         }
-
-        const data = await response.json();
-        const candidateText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (!candidateText) throw new Error('AI থেকে কোনো রেসপন্স পাওয়া যায়নি');
-
-        let jsonStr = candidateText.trim();
-        if (jsonStr.startsWith('```')) {
-          jsonStr = jsonStr.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+        const _0xe2de = await _0xefab['\u006A\u0073\u006F\u006E']();
+        let _0xd_0x3d9;
+        const _0x6a53b = _0xe2de['\u0063\u0061\u006E\u0064\u0069\u0064\u0061\u0074\u0065\u0073']?.[986728 ^ 986728]?.content?.parts?.[116167 ^ 116167]?.text;
+        _0xd_0x3d9 = 790278 ^ 790278;
+        if (!_0x6a53b) throw new Error("\u0041\u0049\u0020\u09A5\u09C7\u0995\u09C7\u0020\u0995\u09CB\u09A8\u09CB\u0020\u09B0\u09C7\u09B8\u09AA\u09A8\u09CD\u09B8\u0020\u09AA\u09BE\u0993\u09DF\u09BE\u0020\u09AF\u09BE\u09DF\u09A8\u09BF");
+        let _0x41b96g = _0x6a53b['\u0074\u0072\u0069\u006D']();
+        if (_0x41b96g['\u0073\u0074\u0061\u0072\u0074\u0073\u0057\u0069\u0074\u0068']('```')) {
+          _0x41b96g = _0x41b96g['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u005E\u0060\u0060\u0060\u0028\u003F\u003A\u006A\u0073\u006F\u006E\u0029\u003F\u005C\u0073\u002A', '\u0069'), '')['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp("\\s*```$", ""), '')['\u0074\u0072\u0069\u006D']();
         }
-        const parsedJson = JSON.parse(jsonStr);
-
-        // Find bank in our database using AI's bankName
-        let detectedBank = findBank(parsedJson.bankName || '');
-        const cleanAcc = (parsedJson.accountNumber || '').toString().replace(/[^\d]/g, '');
-
-        // Resolve routing using AI's bank + branch + district
-        let routingNumber = (parsedJson.routingNumber || '').toString().replace(/[^\d]/g, '');
-
-        // Authoritative: If 9-digit routing number is present, verify/override bank from first 3 digits
-        if (routingNumber && routingNumber.length === 9) {
-          const routingBankCode = routingNumber.substring(0, 3);
-          const bankFromRt = banksDb.find(b => b.c === routingBankCode);
-          if (bankFromRt) {
-            detectedBank = bankFromRt;
+        const _0xefa68e = JSON['\u0070\u0061\u0072\u0073\u0065'](_0x41b96g);
+        let _0xc7fag = _0xb898a(_0xefa68e['\u0062\u0061\u006E\u006B\u004E\u0061\u006D\u0065'] || '');
+        const _0x39aa = (_0xefa68e['\u0061\u0063\u0063\u006F\u0075\u006E\u0074\u004E\u0075\u006D\u0062\u0065\u0072'] || '')['\u0074\u006F\u0053\u0074\u0072\u0069\u006E\u0067']()['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u005B\u005E\u005C\u0064\u005D', '\u0067'), '');
+        let _0x7bbd = (_0xefa68e['\u0072\u006F\u0075\u0074\u0069\u006E\u0067\u004E\u0075\u006D\u0062\u0065\u0072'] || '')['\u0074\u006F\u0053\u0074\u0072\u0069\u006E\u0067']()['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u005B\u005E\u005C\u0064\u005D', '\u0067'), '');
+        if (_0x7bbd && _0x7bbd['\u006C\u0065\u006E\u0067\u0074\u0068'] === (428548 ^ 428557)) {
+          let _0xf261fe;
+          const _0x5f42ea = _0x7bbd['\u0073\u0075\u0062\u0073\u0074\u0072\u0069\u006E\u0067'](923711 ^ 923711, 665525 ^ 665526);
+          _0xf261fe = 262138 ^ 262142;
+          let _0x6b580f;
+          const _0x684e = _0x1c886d['\u0066\u0069\u006E\u0064'](b => b['\u0063'] === _0x5f42ea);
+          _0x6b580f = '\u006F\u0065\u0064\u0065\u0070\u0069';
+          if (_0x684e) {
+            _0xc7fag = _0x684e;
           }
         }
-
-        let routingResult = { routing: '', source: '', district: '', branch: '', candidates: [] };
-
-        if (!routingNumber && detectedBank) {
-          routingResult = resolveRoutingNumber(detectedBank, parsedJson.branchName, parsedJson.district, '');
-          routingNumber = routingResult.routing;
-        } else if (routingNumber && detectedBank) {
-          routingResult = resolveRoutingNumber(detectedBank, parsedJson.branchName, parsedJson.district, '');
-        }
-
-        return {
-          name: parsedJson.name || '',
-          bank: detectedBank,
-          bankName: detectedBank ? detectedBank.n : (parsedJson.bankName || ''),
-          bankCode: detectedBank ? detectedBank.c : '',
-          accountNumber: cleanAcc,
-          branchName: parsedJson.branchName || '',
-          routingNumber: routingNumber,
-          routingSource: parsedJson.routingNumber ? 'মেসেজ থেকে (AI)' : (routingNumber ? 'AI + অটো-রাউটিং ✓' : ''),
-          district: parsedJson.district || routingResult.district,
-          matchedBranch: routingResult.branch,
-          candidates: routingResult.candidates,
-          isAi: true
+        let _0x178gg = {
+          "routing": '',
+          '\u0073\u006F\u0075\u0072\u0063\u0065': '',
+          '\u0064\u0069\u0073\u0074\u0072\u0069\u0063\u0074': '',
+          '\u0062\u0072\u0061\u006E\u0063\u0068': '',
+          "candidates": []
         };
-
+        if (!_0x7bbd && _0xc7fag) {
+          _0x178gg = _0x98825f(_0xc7fag, _0xefa68e['\u0062\u0072\u0061\u006E\u0063\u0068\u004E\u0061\u006D\u0065'], _0xefa68e['\u0064\u0069\u0073\u0074\u0072\u0069\u0063\u0074'], '');
+          _0x7bbd = _0x178gg['\u0072\u006F\u0075\u0074\u0069\u006E\u0067'];
+        } else if (_0x7bbd && _0xc7fag) {
+          _0x178gg = _0x98825f(_0xc7fag, _0xefa68e['\u0062\u0072\u0061\u006E\u0063\u0068\u004E\u0061\u006D\u0065'], _0xefa68e['\u0064\u0069\u0073\u0074\u0072\u0069\u0063\u0074'], '');
+        }
+        return {
+          '\u006E\u0061\u006D\u0065': _0xefa68e['\u006E\u0061\u006D\u0065'] || '',
+          "bank": _0xc7fag,
+          '\u0062\u0061\u006E\u006B\u004E\u0061\u006D\u0065': _0xc7fag ? _0xc7fag['\u006E'] : _0xefa68e['\u0062\u0061\u006E\u006B\u004E\u0061\u006D\u0065'] || '',
+          '\u0062\u0061\u006E\u006B\u0043\u006F\u0064\u0065': _0xc7fag ? _0xc7fag['\u0063'] : '',
+          "accountNumber": _0x39aa,
+          "branchName": _0xefa68e['\u0062\u0072\u0061\u006E\u0063\u0068\u004E\u0061\u006D\u0065'] || '',
+          '\u0072\u006F\u0075\u0074\u0069\u006E\u0067\u004E\u0075\u006D\u0062\u0065\u0072': _0x7bbd,
+          "routingSource": _0xefa68e['\u0072\u006F\u0075\u0074\u0069\u006E\u0067\u004E\u0075\u006D\u0062\u0065\u0072'] ? "\u09AE\u09C7\u09B8\u09C7\u099C\u0020\u09A5\u09C7\u0995\u09C7\u0020\u0028\u0041\u0049\u0029" : _0x7bbd ? "\u0041\u0049\u0020\u002B\u0020\u0985\u099F\u09CB\u002D\u09B0\u09BE\u0989\u099F\u09BF\u0982\u0020\u2713" : '',
+          "district": _0xefa68e['\u0064\u0069\u0073\u0074\u0072\u0069\u0063\u0074'] || _0x178gg['\u0064\u0069\u0073\u0074\u0072\u0069\u0063\u0074'],
+          '\u006D\u0061\u0074\u0063\u0068\u0065\u0064\u0042\u0072\u0061\u006E\u0063\u0068': _0x178gg['\u0062\u0072\u0061\u006E\u0063\u0068'],
+          "candidates": _0x178gg['\u0063\u0061\u006E\u0064\u0069\u0064\u0061\u0074\u0065\u0073'],
+          "isAi": !![]
+        };
       } catch (err) {
-        lastError = err;
-        console.warn(`Model ${model} failed:`, err.message);
+        _0x54c4bf = err;
+        console['\u0077\u0061\u0072\u006E'](`Model ${_0x75191e} failed:`, err['\u006D\u0065\u0073\u0073\u0061\u0067\u0065']);
       }
     }
-
-    throw lastError || new Error('Gemini API কল সফল হয়নি');
+    throw _0x54c4bf || new Error('Gemini API কল সফল হয়নি');
   }
-
-  // --- RENDER PARSED RESULT ---
-  function displayParsedResult(result) {
-    currentParsedResult = result;
-
+  function _0x3123f(result) {
+    _0xce5d = result;
     if (!result) {
-      emptyState.classList.remove('hidden');
-      resultView.classList.add('hidden');
-      parserStatusTag.textContent = 'ইনপুটের অপেক্ষায়';
-      parserStatusTag.className = 'badge badge-waiting';
+      _0x24d8ce['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']("\u0068\u0069\u0064\u0064\u0065\u006E");
+      _0x56g8g['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']('hidden');
+      _0x094fg['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = "\u0987\u09A8\u09AA\u09C1\u099F\u09C7\u09B0\u0020\u0985\u09AA\u09C7\u0995\u09CD\u09B7\u09BE\u09AF\u09BC";
+      _0x094fg['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065'] = "\u0062\u0061\u0064\u0067\u0065\u0020\u0062\u0061\u0064\u0067\u0065\u002D\u0077\u0061\u0069\u0074\u0069\u006E\u0067";
       return;
     }
-
-    emptyState.classList.add('hidden');
-    resultView.classList.remove('hidden');
-
-    // Status Badge
-    if (result.isAi) {
-      parserStatusTag.textContent = '✨ Gemini AI পার্সড ✓';
-      parserStatusTag.className = 'badge badge-ai';
+    _0x24d8ce['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']('hidden');
+    _0x56g8g['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']('hidden');
+    if (result['\u0069\u0073\u0041\u0069']) {
+      _0x094fg['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = "\u2728\u0020\u0047\u0065\u006D\u0069\u006E\u0069\u0020\u0041\u0049\u0020\u09AA\u09BE\u09B0\u09CD\u09B8\u09A1\u0020\u2713";
+      _0x094fg['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065'] = "\u0062\u0061\u0064\u0067\u0065\u0020\u0062\u0061\u0064\u0067\u0065\u002D\u0061\u0069";
     } else {
-      parserStatusTag.textContent = 'পার্স সম্পন্ন ✓';
-      parserStatusTag.className = 'badge badge-success';
+      _0x094fg['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = "\u09AA\u09BE\u09B0\u09CD\u09B8\u0020\u09B8\u09AE\u09CD\u09AA\u09A8\u09CD\u09A8\u0020\u2713";
+      _0x094fg['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065'] = "\u0062\u0061\u0064\u0067\u0065\u0020\u0062\u0061\u0064\u0067\u0065\u002D\u0073\u0075\u0063\u0063\u0065\u0073\u0073";
     }
-
-    // Populate Fields
-    fieldName.value = result.name || '';
-    fieldBank.value = result.bankName || '';
-    fieldAcc.value = result.accountNumber || '';
-    fieldBranch.value = result.branchName || '';
-    fieldRouting.value = result.routingNumber || '';
-
-    // Badges
-    bankCodeBadge.textContent = result.bankCode ? `ব্যাংক কোড: ${result.bankCode}` : 'কোড: ---';
-    accLenBadge.textContent = result.accountNumber ? `${result.accountNumber.length} ডিজিট` : '০ ডিজিট';
-    branchDistBadge.textContent = result.district ? `জেলা: ${result.district}` : 'জেলা: ---';
-
-    // Featured Routing Display
-    updateRoutingCard(result.routingNumber, result.routingSource, result.bankCode);
-
-    // Candidates Switcher
-    renderCandidateBranches(result.candidates, result.routingNumber);
-
-    // Update Dynamic BanksBD.org Search Link
-    updateBanksBdSearchLink(result.bankName, result.branchName);
+    _0x0cb['\u0076\u0061\u006C\u0075\u0065'] = result['\u006E\u0061\u006D\u0065'] || '';
+    _0xdba9cg['\u0076\u0061\u006C\u0075\u0065'] = result['\u0062\u0061\u006E\u006B\u004E\u0061\u006D\u0065'] || '';
+    _0x5_0x46e['\u0076\u0061\u006C\u0075\u0065'] = result['\u0061\u0063\u0063\u006F\u0075\u006E\u0074\u004E\u0075\u006D\u0062\u0065\u0072'] || '';
+    _0x455f['\u0076\u0061\u006C\u0075\u0065'] = result['\u0062\u0072\u0061\u006E\u0063\u0068\u004E\u0061\u006D\u0065'] || '';
+    _0xa393be['\u0076\u0061\u006C\u0075\u0065'] = result['\u0072\u006F\u0075\u0074\u0069\u006E\u0067\u004E\u0075\u006D\u0062\u0065\u0072'] || '';
+    _0x926g0c['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = result['\u0062\u0061\u006E\u006B\u0043\u006F\u0064\u0065'] ? `ব্যাংক কোড: ${result['\u0062\u0061\u006E\u006B\u0043\u006F\u0064\u0065']}` : 'কোড: ---';
+    _0x37e1f['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = result['\u0061\u0063\u0063\u006F\u0075\u006E\u0074\u004E\u0075\u006D\u0062\u0065\u0072'] ? `${result['\u0061\u0063\u0063\u006F\u0075\u006E\u0074\u004E\u0075\u006D\u0062\u0065\u0072']['\u006C\u0065\u006E\u0067\u0074\u0068']} ডিজিট` : "\u09E6\u0020\u09A1\u09BF\u099C\u09BF\u099F";
+    _0x59452f['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = result['\u0064\u0069\u0073\u0074\u0072\u0069\u0063\u0074'] ? `জেলা: ${result['\u0064\u0069\u0073\u0074\u0072\u0069\u0063\u0074']}` : "\u099C\u09C7\u09B2\u09BE\u003A\u0020\u002D\u002D\u002D";
+    _0x8219g(result['\u0072\u006F\u0075\u0074\u0069\u006E\u0067\u004E\u0075\u006D\u0062\u0065\u0072'], result['\u0072\u006F\u0075\u0074\u0069\u006E\u0067\u0053\u006F\u0075\u0072\u0063\u0065'], result['\u0062\u0061\u006E\u006B\u0043\u006F\u0064\u0065']);
+    _0x8c5b0d(result['\u0063\u0061\u006E\u0064\u0069\u0064\u0061\u0074\u0065\u0073'], result['\u0072\u006F\u0075\u0074\u0069\u006E\u0067\u004E\u0075\u006D\u0062\u0065\u0072']);
+    _0x984d6b(result['\u0062\u0061\u006E\u006B\u004E\u0061\u006D\u0065'], result['\u0062\u0072\u0061\u006E\u0063\u0068\u004E\u0061\u006D\u0065']);
   }
-
-  function updateBanksBdSearchLink(bankName, branchName) {
-    const linkBanksBd = document.getElementById('link-search-banksbd');
-    if (!linkBanksBd) return;
-
-    const bName = (bankName || fieldBank.value || '').trim();
-    const brName = (branchName || fieldBranch.value || '').trim();
-
-    if (bName || brName) {
-      linkBanksBd.href = `https://www.google.com/search?q=site:banksbd.org+${encodeURIComponent(bName + ' ' + brName + ' routing')}`;
-      linkBanksBd.innerHTML = `
+  function _0x984d6b(bankName, branchName) {
+    const _0xf49da = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u006C\u0069\u006E\u006B\u002D\u0073\u0065\u0061\u0072\u0063\u0068\u002D\u0062\u0061\u006E\u006B\u0073\u0062\u0064");
+    if (!_0xf49da) return;
+    const _0x3b9b = (bankName || _0xdba9cg['\u0076\u0061\u006C\u0075\u0065'] || '')['\u0074\u0072\u0069\u006D']();
+    var _0xf26ab = (750704 ^ 750707) + (349100 ^ 349102);
+    const _0x0e_0x24b = (branchName || _0x455f['\u0076\u0061\u006C\u0075\u0065'] || '')['\u0074\u0072\u0069\u006D']();
+    _0xf26ab = "hgjebe";
+    if (_0x3b9b || _0x0e_0x24b) {
+      _0xf49da['\u0068\u0072\u0065\u0066'] = `https://www.google.com/search?q=site:banksbd.org+${encodeURIComponent(_0x3b9b + "\u0020" + _0x0e_0x24b + ' routing')}`;
+      _0xf49da['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'] = `
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-        <span>🌐 BanksBD.org-এ '${brName || bName}' দেখুন ↗</span>
+        <span>🌐 BanksBD.org-এ '${_0x0e_0x24b || _0x3b9b}' দেখুন ↗</span>
       `;
-      linkBanksBd.title = `BanksBD.org-এ ${bName} ${brName} ব্রাঞ্চের তথ্য সরাসরি দেখুন`;
+      _0xf49da['\u0074\u0069\u0074\u006C\u0065'] = `BanksBD.org-এ ${_0x3b9b} ${_0x0e_0x24b} ব্রাঞ্চের তথ্য সরাসরি দেখুন`;
     } else {
-      linkBanksBd.href = 'https://www.banksbd.org/';
-      linkBanksBd.innerHTML = `
+      _0xf49da['\u0068\u0072\u0065\u0066'] = "\u0068\u0074\u0074\u0070\u0073\u003A\u002F\u002F\u0077\u0077\u0077\u002E\u0062\u0061\u006E\u006B\u0073\u0062\u0064\u002E\u006F\u0072\u0067\u002F";
+      _0xf49da['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'] = `
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
         <span>🌐 BanksBD.org-এ ১-ক্লিকে দেখুন ↗</span>
       `;
-      linkBanksBd.title = 'BanksBD.org-এ সরাসরি ব্রাউজ করুন';
+      _0xf49da['\u0074\u0069\u0074\u006C\u0065'] = "\u0042\u0061\u006E\u006B\u0073\u0042\u0044\u002E\u006F\u0072\u0067\u002D\u098F\u0020\u09B8\u09B0\u09BE\u09B8\u09B0\u09BF\u0020\u09AC\u09CD\u09B0\u09BE\u0989\u099C\u0020\u0995\u09B0\u09C1\u09A8";
     }
   }
-
-  function updateRoutingCard(routingNumber, source, bankCode) {
-    if (routingNumber && routingNumber.length === 9) {
-      displayRoutingNumber.textContent = routingNumber;
-      fieldRouting.value = routingNumber;
-      routingSourceBadge.textContent = source || 'অটো-ডিটেক্টেড ✓';
-      routingSourceBadge.className = 'badge badge-success';
-
-      bdBankCode.textContent = routingNumber.substring(0, 3);
-      bdDistCode.textContent = routingNumber.substring(3, 5);
-      bdBranchCode.textContent = routingNumber.substring(5, 8);
-      bdCheckDigit.textContent = routingNumber.substring(8, 9);
+  function _0x8219g(routingNumber, source, bankCode) {
+    if (routingNumber && routingNumber['\u006C\u0065\u006E\u0067\u0074\u0068'] === (503705 ^ 503696)) {
+      _0xdc34c['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = routingNumber;
+      _0xa393be['\u0076\u0061\u006C\u0075\u0065'] = routingNumber;
+      _0xb1e8ac['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = source || 'অটো-ডিটেক্টেড ✓';
+      _0xb1e8ac['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065'] = 'badge badge-success';
+      _0xb5fadc['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = routingNumber['\u0073\u0075\u0062\u0073\u0074\u0072\u0069\u006E\u0067'](290950 ^ 290950, 580660 ^ 580663);
+      _0x379c0a['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = routingNumber['\u0073\u0075\u0062\u0073\u0074\u0072\u0069\u006E\u0067'](498975 ^ 498972, 375091 ^ 375094);
+      _0xb0c89b['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = routingNumber['\u0073\u0075\u0062\u0073\u0074\u0072\u0069\u006E\u0067'](109262 ^ 109259, 788557 ^ 788549);
+      _0xc676bc['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = routingNumber['\u0073\u0075\u0062\u0073\u0074\u0072\u0069\u006E\u0067'](168342 ^ 168350, 562465 ^ 562472);
     } else {
-      displayRoutingNumber.textContent = 'পাওয়া যায়নি';
-      fieldRouting.value = '';
-      routingSourceBadge.textContent = 'ব্রাঞ্চ সিলেক্ট করুন';
-      routingSourceBadge.className = 'badge badge-waiting';
-      bdBankCode.textContent = bankCode || '---';
-      bdDistCode.textContent = '--';
-      bdBranchCode.textContent = '---';
-      bdCheckDigit.textContent = '-';
+      _0xdc34c['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = "\u09AA\u09BE\u0993\u09AF\u09BC\u09BE\u0020\u09AF\u09BE\u09AF\u09BC\u09A8\u09BF";
+      _0xa393be['\u0076\u0061\u006C\u0075\u0065'] = '';
+      _0xb1e8ac['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = "\u09AC\u09CD\u09B0\u09BE\u099E\u09CD\u099A\u0020\u09B8\u09BF\u09B2\u09C7\u0995\u09CD\u099F\u0020\u0995\u09B0\u09C1\u09A8";
+      _0xb1e8ac['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065'] = "\u0062\u0061\u0064\u0067\u0065\u0020\u0062\u0061\u0064\u0067\u0065\u002D\u0077\u0061\u0069\u0074\u0069\u006E\u0067";
+      _0xb5fadc['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = bankCode || '---';
+      _0x379c0a['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = "\u002D\u002D";
+      _0xb0c89b['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = '---';
+      _0xc676bc['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = "\u002D";
     }
   }
-
-  function renderCandidateBranches(candidates, currentRouting) {
-    if (!candidates || candidates.length <= 1) {
-      candidatesBox.classList.add('hidden');
-      candidatesList.innerHTML = '';
+  function _0x8c5b0d(candidates, currentRouting) {
+    if (!candidates || candidates['\u006C\u0065\u006E\u0067\u0074\u0068'] <= (681810 ^ 681811)) {
+      _0xd6agcf['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']('hidden');
+      _0x64b8b['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'] = '';
       return;
     }
-
-    candidatesBox.classList.remove('hidden');
-    candidatesList.innerHTML = '';
-
-    candidates.slice(0, 5).forEach(c => {
-      const pill = document.createElement('button');
-      pill.type = 'button';
-      pill.className = `candidate-pill ${c.routing === currentRouting ? 'active' : ''}`;
-      pill.innerHTML = `<span>${c.name} (${c.district})</span> <code>${c.routing}</code>`;
-      pill.addEventListener('click', () => {
-        fieldBranch.value = c.name;
-        fieldRouting.value = c.routing;
-        branchDistBadge.textContent = `জেলা: ${c.district}`;
-        updateRoutingCard(c.routing, 'ব্যবহারকারীর নির্বাচিত', bdBankCode.textContent);
-        
-        candidatesList.querySelectorAll('.candidate-pill').forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
-        showToast(`ব্রাঞ্চ পরিবর্তিত: ${c.name}`);
+    _0xd6agcf['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']("\u0068\u0069\u0064\u0064\u0065\u006E");
+    _0x64b8b['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'] = '';
+    candidates['\u0073\u006C\u0069\u0063\u0065'](680177 ^ 680177, 771646 ^ 771643)['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](c => {
+      const _0xf3_0x17e = document['\u0063\u0072\u0065\u0061\u0074\u0065\u0045\u006C\u0065\u006D\u0065\u006E\u0074']('button');
+      _0xf3_0x17e['\u0074\u0079\u0070\u0065'] = "\u0062\u0075\u0074\u0074\u006F\u006E";
+      _0xf3_0x17e['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065'] = `candidate-pill ${c['\u0072\u006F\u0075\u0074\u0069\u006E\u0067'] === currentRouting ? 'active' : ''}`;
+      _0xf3_0x17e['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'] = `<span>${c['\u006E\u0061\u006D\u0065']} (${c['\u0064\u0069\u0073\u0074\u0072\u0069\u0063\u0074']})</span> <code>${c['\u0072\u006F\u0075\u0074\u0069\u006E\u0067']}</code>`;
+      _0xf3_0x17e['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']('click', () => {
+        _0x455f['\u0076\u0061\u006C\u0075\u0065'] = c['\u006E\u0061\u006D\u0065'];
+        _0xa393be['\u0076\u0061\u006C\u0075\u0065'] = c['\u0072\u006F\u0075\u0074\u0069\u006E\u0067'];
+        _0x59452f['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = `জেলা: ${c['\u0064\u0069\u0073\u0074\u0072\u0069\u0063\u0074']}`;
+        _0x8219g(c['\u0072\u006F\u0075\u0074\u0069\u006E\u0067'], "\u09AC\u09CD\u09AF\u09AC\u09B9\u09BE\u09B0\u0995\u09BE\u09B0\u09C0\u09B0\u0020\u09A8\u09BF\u09B0\u09CD\u09AC\u09BE\u099A\u09BF\u09A4", _0xb5fadc['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']);
+        _0x64b8b['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("\u002E\u0063\u0061\u006E\u0064\u0069\u0064\u0061\u0074\u0065\u002D\u0070\u0069\u006C\u006C")['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](p => p['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']("\u0061\u0063\u0074\u0069\u0076\u0065"));
+        _0xf3_0x17e['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']('active');
+        _0xc3ae(`ব্রাঞ্চ পরিবর্তিত: ${c['\u006E\u0061\u006D\u0065']}`);
       });
-      candidatesList.appendChild(pill);
+      _0x64b8b['\u0061\u0070\u0070\u0065\u006E\u0064\u0043\u0068\u0069\u006C\u0064'](_0xf3_0x17e);
     });
   }
-
-  // --- COPY OPERATIONS ---
-  function copyToClipboard(text, successMsg) {
+  function _0xf_0xb66(text, successMsg) {
     if (!text) {
-      showToast('কপি করার জন্য কোনো তথ্য পাওয়া যায়নি!', 'error');
-      return Promise.reject('No text');
+      _0xc3ae('কপি করার জন্য কোনো তথ্য পাওয়া যায়নি!', 'error');
+      return Promise['\u0072\u0065\u006A\u0065\u0063\u0074']('No text');
     }
-
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      return navigator.clipboard.writeText(text).then(() => {
-        showToast(successMsg || 'কপি হয়েছে! ✓');
-      }).catch(() => fallbackCopy(text, successMsg));
+    if (navigator['\u0063\u006C\u0069\u0070\u0062\u006F\u0061\u0072\u0064'] && navigator['\u0063\u006C\u0069\u0070\u0062\u006F\u0061\u0072\u0064']['\u0077\u0072\u0069\u0074\u0065\u0054\u0065\u0078\u0074']) {
+      return navigator['\u0063\u006C\u0069\u0070\u0062\u006F\u0061\u0072\u0064']['\u0077\u0072\u0069\u0074\u0065\u0054\u0065\u0078\u0074'](text)['\u0074\u0068\u0065\u006E'](() => {
+        _0xc3ae(successMsg || "\u0995\u09AA\u09BF\u0020\u09B9\u09AF\u09BC\u09C7\u099B\u09C7\u0021\u0020\u2713");
+      })['\u0063\u0061\u0074\u0063\u0068'](() => _0xd96a5d(text, successMsg));
     } else {
-      fallbackCopy(text, successMsg);
-      return Promise.resolve();
+      _0xd96a5d(text, successMsg);
+      return Promise['\u0072\u0065\u0073\u006F\u006C\u0076\u0065']();
     }
   }
-
-  function fallbackCopy(text, successMsg) {
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.style.position = 'fixed';
-    textarea.style.opacity = '0';
-    document.body.appendChild(textarea);
-    textarea.select();
+  function _0xd96a5d(text, successMsg) {
+    var _0xb1213c = (487826 ^ 487824) + (835045 ^ 835045);
+    const _0x5862c = document['\u0063\u0072\u0065\u0061\u0074\u0065\u0045\u006C\u0065\u006D\u0065\u006E\u0074']("\u0074\u0065\u0078\u0074\u0061\u0072\u0065\u0061");
+    _0xb1213c = 769501 ^ 769503;
+    _0x5862c['\u0076\u0061\u006C\u0075\u0065'] = text;
+    _0x5862c['\u0073\u0074\u0079\u006C\u0065']['\u0070\u006F\u0073\u0069\u0074\u0069\u006F\u006E'] = 'fixed';
+    _0x5862c['\u0073\u0074\u0079\u006C\u0065']['\u006F\u0070\u0061\u0063\u0069\u0074\u0079'] = "\u0030";
+    document['\u0062\u006F\u0064\u0079']['\u0061\u0070\u0070\u0065\u006E\u0064\u0043\u0068\u0069\u006C\u0064'](_0x5862c);
+    _0x5862c['\u0073\u0065\u006C\u0065\u0063\u0074']();
     try {
-      document.execCommand('copy');
-      showToast(successMsg || 'কপি হয়েছে! ✓');
+      document['\u0065\u0078\u0065\u0063\u0043\u006F\u006D\u006D\u0061\u006E\u0064']("\u0063\u006F\u0070\u0079");
+      _0xc3ae(successMsg || 'কপি হয়েছে! ✓');
     } catch (e) {
-      showToast('কপি ব্যর্থ হয়েছে, ম্যানুয়ালি কপি করুন!', 'error');
+      _0xc3ae("\u0995\u09AA\u09BF\u0020\u09AC\u09CD\u09AF\u09B0\u09CD\u09A5\u0020\u09B9\u09AF\u09BC\u09C7\u099B\u09C7\u002C\u0020\u09AE\u09CD\u09AF\u09BE\u09A8\u09C1\u09AF\u09BC\u09BE\u09B2\u09BF\u0020\u0995\u09AA\u09BF\u0020\u0995\u09B0\u09C1\u09A8\u0021", 'error');
     }
-    document.body.removeChild(textarea);
+    document['\u0062\u006F\u0064\u0079']['\u0072\u0065\u006D\u006F\u0076\u0065\u0043\u0068\u0069\u006C\u0064'](_0x5862c);
   }
-
-  function attachCopyFeedback(button) {
-    const originalHtml = button.innerHTML;
-    button.classList.add('copied');
-    button.innerHTML = `
+  function _0xa87b9c(button) {
+    let _0x4a7df;
+    const _0x88c = button['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'];
+    _0x4a7df = (590865 ^ 590871) + (681320 ^ 681324);
+    button['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']("\u0063\u006F\u0070\u0069\u0065\u0064");
+    button['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'] = `
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
       <span>কপি হয়েছে!</span>
     `;
     setTimeout(() => {
-      button.classList.remove('copied');
-      button.innerHTML = originalHtml;
-    }, 1800);
+      button['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']('copied');
+      button['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'] = _0x88c;
+    }, 676742 ^ 677006);
   }
-
-  function copyAllDetails() {
-    const name = fieldName.value.trim();
-    const bank = fieldBank.value.trim();
-    const acc = fieldAcc.value.trim();
-    const branch = fieldBranch.value.trim();
-    const routing = fieldRouting.value.trim();
-    const district = branchDistBadge.textContent.replace('জেলা: ', '').trim();
-
-    if (!bank && !acc && !name) {
-      showToast('কপি করার জন্য কোনো তথ্য নেই!', 'error');
+  function _0x8b2fea() {
+    const _0xf6_0xdc2 = _0x0cb['\u0076\u0061\u006C\u0075\u0065']['\u0074\u0072\u0069\u006D']();
+    var _0x8b2ad = (816119 ^ 816126) + (649998 ^ 649999);
+    const _0x23_0xc51 = _0xdba9cg['\u0076\u0061\u006C\u0075\u0065']['\u0074\u0072\u0069\u006D']();
+    _0x8b2ad = '\u0063\u0066\u006E\u006E\u0065\u0062';
+    const _0x3f47d = _0x5_0x46e['\u0076\u0061\u006C\u0075\u0065']['\u0074\u0072\u0069\u006D']();
+    const _0x9add8d = _0x455f['\u0076\u0061\u006C\u0075\u0065']['\u0074\u0072\u0069\u006D']();
+    let _0xfe34g;
+    const _0x1c57ce = _0xa393be['\u0076\u0061\u006C\u0075\u0065']['\u0074\u0072\u0069\u006D']();
+    _0xfe34g = '\u006A\u0069\u0063\u0063\u0063\u006B';
+    let _0x9e61ec;
+    const _0x734e = _0x59452f['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']['\u0072\u0065\u0070\u006C\u0061\u0063\u0065']('জেলা: ', '')['\u0074\u0072\u0069\u006D']();
+    _0x9e61ec = (253355 ^ 253355) + (295803 ^ 295794);
+    if (!_0x23_0xc51 && !_0x3f47d && !_0xf6_0xdc2) {
+      _0xc3ae("\u0995\u09AA\u09BF\u0020\u0995\u09B0\u09BE\u09B0\u0020\u099C\u09A8\u09CD\u09AF\u0020\u0995\u09CB\u09A8\u09CB\u0020\u09A4\u09A5\u09CD\u09AF\u0020\u09A8\u09C7\u0987\u0021", "\u0065\u0072\u0072\u006F\u0072");
       return;
     }
-
-    const format = document.querySelector('input[name="copy-format"]:checked')?.value || 'beftn';
-    let outputText = '';
-
-    if (format === 'beftn') {
-      outputText = [
-        `Beneficiary Name: ${name}`,
-        `Bank Name: ${bank}`,
-        `Account Number: ${acc}`,
-        `Branch Name: ${branch}`,
-        `Routing Number: ${routing}`,
-        district && district !== '---' ? `District: ${district}` : ''
-      ].filter(Boolean).join('\n');
-    } else if (format === 'bangla') {
-      outputText = [
-        `হিসাবের নাম: ${name}`,
-        `ব্যাংকের নাম: ${bank}`,
-        `অ্যাকাউন্ট নম্বর: ${acc}`,
-        `ব্রাঞ্চের নাম: ${branch}`,
-        `রাউটিং নম্বর: ${routing}`,
-        district && district !== '---' ? `জেলা: ${district}` : ''
-      ].filter(Boolean).join('\n');
-    } else if (format === 'table') {
-      outputText = `${name}\t${bank}\t${acc}\t${branch}\t${routing}\t${district}`;
+    var _0x64bg = (429698 ^ 429706) + (599223 ^ 599220);
+    const _0x183b = document['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']('input[name="copy-format"]:checked')?.value || 'beftn';
+    _0x64bg = 278149 ^ 278146;
+    let _0x1caeed = '';
+    if (_0x183b === "\u0062\u0065\u0066\u0074\u006E") {
+      _0x1caeed = [`Beneficiary Name: ${_0xf6_0xdc2}`, `Bank Name: ${_0x23_0xc51}`, `Account Number: ${_0x3f47d}`, `Branch Name: ${_0x9add8d}`, `Routing Number: ${_0x1c57ce}`, _0x734e && _0x734e !== "\u002D\u002D\u002D" ? `District: ${_0x734e}` : '']['\u0066\u0069\u006C\u0074\u0065\u0072'](Boolean)['\u006A\u006F\u0069\u006E']("\u000A");
+    } else if (_0x183b === 'bangla') {
+      _0x1caeed = [`হিসাবের নাম: ${_0xf6_0xdc2}`, `ব্যাংকের নাম: ${_0x23_0xc51}`, `অ্যাকাউন্ট নম্বর: ${_0x3f47d}`, `ব্রাঞ্চের নাম: ${_0x9add8d}`, `রাউটিং নম্বর: ${_0x1c57ce}`, _0x734e && _0x734e !== '---' ? `জেলা: ${_0x734e}` : '']['\u0066\u0069\u006C\u0074\u0065\u0072'](Boolean)['\u006A\u006F\u0069\u006E']("\u000A");
+    } else if (_0x183b === "\u0074\u0061\u0062\u006C\u0065") {
+      _0x1caeed = `${_0xf6_0xdc2}\t${_0x23_0xc51}\t${_0x3f47d}\t${_0x9add8d}\t${_0x1c57ce}\t${_0x734e}`;
     }
-
-    copyToClipboard(outputText, 'সমস্ত তথ্য একসাথে কপি করা হয়েছে! ✓').then(() => {
-      attachCopyFeedback(btnCopyAll);
-      saveToHistory();
+    _0xf_0xb66(_0x1caeed, 'সমস্ত তথ্য একসাথে কপি করা হয়েছে! ✓')['\u0074\u0068\u0065\u006E'](() => {
+      _0xa87b9c(_0xd30fag);
+      _0xf2c54e();
     });
   }
-
-  // --- TOAST NOTIFICATION ---
-  function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    if (type === 'error') {
-      toast.style.borderColor = 'var(--accent-rose)';
-      toast.innerHTML = `
+  function _0xc3ae(message, type = 'success') {
+    const _0x612b5c = document['\u0063\u0072\u0065\u0061\u0074\u0065\u0045\u006C\u0065\u006D\u0065\u006E\u0074']("\u0064\u0069\u0076");
+    _0x612b5c['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065'] = 'toast';
+    if (type === "\u0065\u0072\u0072\u006F\u0072") {
+      _0x612b5c['\u0073\u0074\u0079\u006C\u0065']['\u0062\u006F\u0072\u0064\u0065\u0072\u0043\u006F\u006C\u006F\u0072'] = 'var(--accent-rose)';
+      _0x612b5c['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'] = `
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-rose)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
         <span>${message}</span>
       `;
     } else {
-      toast.innerHTML = `
+      _0x612b5c['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'] = `
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
         <span>${message}</span>
       `;
     }
-
-    toastContainer.appendChild(toast);
+    _0xce053b['\u0061\u0070\u0070\u0065\u006E\u0064\u0043\u0068\u0069\u006C\u0064'](_0x612b5c);
     setTimeout(() => {
-      if (toast.parentNode) toast.parentNode.removeChild(toast);
-    }, 2800);
+      if (_0x612b5c['\u0070\u0061\u0072\u0065\u006E\u0074\u004E\u006F\u0064\u0065']) _0x612b5c['\u0070\u0061\u0072\u0065\u006E\u0074\u004E\u006F\u0064\u0065']['\u0072\u0065\u006D\u006F\u0076\u0065\u0043\u0068\u0069\u006C\u0064'](_0x612b5c);
+    }, 330638 ^ 328062);
   }
-
-  // --- AI MODAL & SETTINGS ---
-  function updateAiStatusUI() {
-    if (geminiApiKey) {
-      if (headerAiStatusText) headerAiStatusText.textContent = 'Gemini AI সক্রিয় ✓';
-      if (btnOpenAiSettings) btnOpenAiSettings.classList.add('has-key');
-      if (apiStatusPill) {
-        apiStatusPill.textContent = 'কী সংরক্ষিত আছে ✓';
-        apiStatusPill.className = 'badge badge-success';
+  function _0xbgde() {
+    if (_0xcde) {
+      if (_0xa_0xb89) _0xa_0xb89['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = "\u0047\u0065\u006D\u0069\u006E\u0069\u0020\u0041\u0049\u0020\u09B8\u0995\u09CD\u09B0\u09BF\u09AF\u09BC\u0020\u2713";
+      if (_0xa6e2aa) _0xa6e2aa['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']("\u0068\u0061\u0073\u002D\u006B\u0065\u0079");
+      if (_0x7d8d7d) {
+        _0x7d8d7d['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = 'কী সংরক্ষিত আছে ✓';
+        _0x7d8d7d['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065'] = "\u0062\u0061\u0064\u0067\u0065\u0020\u0062\u0061\u0064\u0067\u0065\u002D\u0073\u0075\u0063\u0063\u0065\u0073\u0073";
       }
     } else {
-      if (headerAiStatusText) headerAiStatusText.textContent = 'Gemini AI সেটআপ';
-      if (btnOpenAiSettings) btnOpenAiSettings.classList.remove('has-key');
-      if (apiStatusPill) {
-        apiStatusPill.textContent = 'কোনো API Key সেট করা নেই';
-        apiStatusPill.className = 'badge badge-waiting';
+      if (_0xa_0xb89) _0xa_0xb89['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = 'Gemini AI সেটআপ';
+      if (_0xa6e2aa) _0xa6e2aa['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']("\u0068\u0061\u0073\u002D\u006B\u0065\u0079");
+      if (_0x7d8d7d) {
+        _0x7d8d7d['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = 'কোনো API Key সেট করা নেই';
+        _0x7d8d7d['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065'] = "\u0062\u0061\u0064\u0067\u0065\u0020\u0062\u0061\u0064\u0067\u0065\u002D\u0077\u0061\u0069\u0074\u0069\u006E\u0067";
       }
     }
-    if (aiAutoUseToggle) aiAutoUseToggle.checked = geminiAutoUse;
+    if (_0x342b3f) _0x342b3f['\u0063\u0068\u0065\u0063\u006B\u0065\u0064'] = _0x86a1c;
   }
-
-  function openAiModal() {
-    aiApiKeyInput.value = geminiApiKey;
-    aiAutoUseToggle.checked = geminiAutoUse;
-    aiModal.classList.remove('hidden');
-    aiApiKeyInput.focus();
+  function _0x496c1b() {
+    _0x1d29e['\u0076\u0061\u006C\u0075\u0065'] = _0xcde;
+    _0x342b3f['\u0063\u0068\u0065\u0063\u006B\u0065\u0064'] = _0x86a1c;
+    _0x48d1g['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']('hidden');
+    _0x1d29e['\u0066\u006F\u0063\u0075\u0073']();
   }
-
-  function closeAiModal() {
-    aiModal.classList.add('hidden');
+  function _0xf083d() {
+    _0x48d1g['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']("\u0068\u0069\u0064\u0064\u0065\u006E");
   }
-
-  function saveAiSettings() {
-    const key = aiApiKeyInput.value.trim();
-    geminiApiKey = key;
-    geminiAutoUse = aiAutoUseToggle.checked;
-    
-    localStorage.setItem(GEMINI_API_KEY_STORAGE, key);
-    localStorage.setItem(GEMINI_AUTO_USE_STORAGE, geminiAutoUse ? 'true' : 'false');
-
-    updateAiStatusUI();
-    closeAiModal();
-    showToast(key ? 'Gemini API Key সংরক্ষিত হয়েছে! ✓' : 'API Key মুছে ফেলা হয়েছে');
+  function _0xa1f69f() {
+    const _0x56b8f = _0x1d29e['\u0076\u0061\u006C\u0075\u0065']['\u0074\u0072\u0069\u006D']();
+    _0xcde = _0x56b8f;
+    _0x86a1c = _0x342b3f['\u0063\u0068\u0065\u0063\u006B\u0065\u0064'];
+    localStorage['\u0073\u0065\u0074\u0049\u0074\u0065\u006D'](_0x26gd4f, _0x56b8f);
+    localStorage['\u0073\u0065\u0074\u0049\u0074\u0065\u006D'](_0x4_0xe27, _0x86a1c ? "\u0074\u0072\u0075\u0065" : 'false');
+    _0xbgde();
+    _0xf083d();
+    _0xc3ae(_0x56b8f ? 'Gemini API Key সংরক্ষিত হয়েছে! ✓' : 'API Key মুছে ফেলা হয়েছে');
   }
-
-  function removeAiKey() {
-    geminiApiKey = '';
-    aiApiKeyInput.value = '';
-    localStorage.removeItem(GEMINI_API_KEY_STORAGE);
-    updateAiStatusUI();
-    showToast('API Key সফলভাবে মুছে ফেলা হয়েছে');
+  function _0x5bf() {
+    _0xcde = '';
+    _0x1d29e['\u0076\u0061\u006C\u0075\u0065'] = '';
+    localStorage['\u0072\u0065\u006D\u006F\u0076\u0065\u0049\u0074\u0065\u006D'](_0x26gd4f);
+    _0xbgde();
+    _0xc3ae("\u0041\u0050\u0049\u0020\u004B\u0065\u0079\u0020\u09B8\u09AB\u09B2\u09AD\u09BE\u09AC\u09C7\u0020\u09AE\u09C1\u099B\u09C7\u0020\u09AB\u09C7\u09B2\u09BE\u0020\u09B9\u09AF\u09BC\u09C7\u099B\u09C7");
   }
-
-  // --- HISTORY SYSTEM ---
-  function loadHistory() {
+  function _0x4f454d() {
     try {
-      const data = localStorage.getItem(HISTORY_STORAGE_KEY);
-      historyItems = data ? JSON.parse(data) : [];
+      var _0x3_0x7a3 = (518878 ^ 518879) + (376142 ^ 376139);
+      const _0xg6103a = localStorage['\u0067\u0065\u0074\u0049\u0074\u0065\u006D'](_0x09f4ce);
+      _0x3_0x7a3 = 617036 ^ 617035;
+      _0xg9e3ae = _0xg6103a ? JSON['\u0070\u0061\u0072\u0073\u0065'](_0xg6103a) : [];
     } catch (e) {
-      historyItems = [];
+      _0xg9e3ae = [];
     }
-    renderHistory();
+    _0xabe();
   }
-
-  function saveToHistory() {
-    const name = fieldName.value.trim();
-    const bank = fieldBank.value.trim();
-    const acc = fieldAcc.value.trim();
-    const branch = fieldBranch.value.trim();
-    const routing = fieldRouting.value.trim();
-    const district = branchDistBadge.textContent.replace('জেলা: ', '').trim();
-
-    if (!acc && !name) return;
-
-    const duplicate = historyItems.find(h => h.acc === acc && h.bank === bank);
-    if (!duplicate) {
-      historyItems.unshift({
-        id: Date.now(),
-        time: new Date().toLocaleString('bn-BD', { dateStyle: 'short', timeStyle: 'short' }),
-        name,
-        bank,
-        acc,
-        branch,
-        routing,
-        district
+  function _0xf2c54e() {
+    var _0x2f820a = (855320 ^ 855321) + (410982 ^ 410990);
+    const _0xbe468d = _0x0cb['\u0076\u0061\u006C\u0075\u0065']['\u0074\u0072\u0069\u006D']();
+    _0x2f820a = 335718 ^ 335712;
+    const _0xc575e = _0xdba9cg['\u0076\u0061\u006C\u0075\u0065']['\u0074\u0072\u0069\u006D']();
+    const _0x58492g = _0x5_0x46e['\u0076\u0061\u006C\u0075\u0065']['\u0074\u0072\u0069\u006D']();
+    const _0xd7146g = _0x455f['\u0076\u0061\u006C\u0075\u0065']['\u0074\u0072\u0069\u006D']();
+    let _0xdc_0x721;
+    const _0x68cdd = _0xa393be['\u0076\u0061\u006C\u0075\u0065']['\u0074\u0072\u0069\u006D']();
+    _0xdc_0x721 = (187101 ^ 187101) + (340021 ^ 340017);
+    var _0xg352d = (634442 ^ 634434) + (357928 ^ 357933);
+    const _0x185b = _0x59452f['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']['\u0072\u0065\u0070\u006C\u0061\u0063\u0065']('জেলা: ', '')['\u0074\u0072\u0069\u006D']();
+    _0xg352d = "dfcjqc";
+    if (!_0x58492g && !_0xbe468d) return;
+    var _0xc814bc = (801411 ^ 801413) + (117050 ^ 117052);
+    const _0x15_0x6dd = _0xg9e3ae['\u0066\u0069\u006E\u0064'](h => h['\u0061\u0063\u0063'] === _0x58492g && h['\u0062\u0061\u006E\u006B'] === _0xc575e);
+    _0xc814bc = (157075 ^ 157078) + (467407 ^ 467401);
+    if (!_0x15_0x6dd) {
+      _0xg9e3ae['\u0075\u006E\u0073\u0068\u0069\u0066\u0074']({
+        '\u0069\u0064': Date['\u006E\u006F\u0077'](),
+        '\u0074\u0069\u006D\u0065': new Date()['\u0074\u006F\u004C\u006F\u0063\u0061\u006C\u0065\u0053\u0074\u0072\u0069\u006E\u0067']("\u0062\u006E\u002D\u0042\u0044", {
+          "dateStyle": "\u0073\u0068\u006F\u0072\u0074",
+          '\u0074\u0069\u006D\u0065\u0053\u0074\u0079\u006C\u0065': "\u0073\u0068\u006F\u0072\u0074"
+        }),
+        '\u006E\u0061\u006D\u0065': _0xbe468d,
+        "bank": _0xc575e,
+        "acc": _0x58492g,
+        '\u0062\u0072\u0061\u006E\u0063\u0068': _0xd7146g,
+        '\u0072\u006F\u0075\u0074\u0069\u006E\u0067': _0x68cdd,
+        '\u0064\u0069\u0073\u0074\u0072\u0069\u0063\u0074': _0x185b
       });
-
-      if (historyItems.length > 30) historyItems.pop();
+      if (_0xg9e3ae['\u006C\u0065\u006E\u0067\u0074\u0068'] > (343200 ^ 343230)) _0xg9e3ae['\u0070\u006F\u0070']();
       try {
-        localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(historyItems));
+        localStorage['\u0073\u0065\u0074\u0049\u0074\u0065\u006D'](_0x09f4ce, JSON['\u0073\u0074\u0072\u0069\u006E\u0067\u0069\u0066\u0079'](_0xg9e3ae));
       } catch (e) {}
-      renderHistory();
-      showToast('হিস্টোরিতে সংরক্ষিত হয়েছে');
+      _0xabe();
+      _0xc3ae("\u09B9\u09BF\u09B8\u09CD\u099F\u09CB\u09B0\u09BF\u09A4\u09C7\u0020\u09B8\u0982\u09B0\u0995\u09CD\u09B7\u09BF\u09A4\u0020\u09B9\u09AF\u09BC\u09C7\u099B\u09C7");
     }
   }
-
-  function renderHistory() {
-    if (historyBadge) {
-      historyBadge.textContent = historyItems.length.toLocaleString('bn-BD');
+  function _0xabe() {
+    if (_0x8cf7b) {
+      _0x8cf7b['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = _0xg9e3ae['\u006C\u0065\u006E\u0067\u0074\u0068']['\u0074\u006F\u004C\u006F\u0063\u0061\u006C\u0065\u0053\u0074\u0072\u0069\u006E\u0067']('bn-BD');
     }
-
-    if (!historyItems.length) {
-      historyEmpty.classList.remove('hidden');
-      historyList.classList.add('hidden');
+    if (!_0xg9e3ae['\u006C\u0065\u006E\u0067\u0074\u0068']) {
+      _0xa8df6a['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']("\u0068\u0069\u0064\u0064\u0065\u006E");
+      _0xd2fe7a['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']("\u0068\u0069\u0064\u0064\u0065\u006E");
       return;
     }
-
-    historyEmpty.classList.add('hidden');
-    historyList.classList.remove('hidden');
-    historyList.innerHTML = '';
-
-    historyItems.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'history-card';
-      card.innerHTML = `
-        <div class="history-time">🕒 ${item.time}</div>
-        <div class="history-name">${item.name || 'নাম নেই'}</div>
-        <div class="history-bank">${item.bank} • ${item.branch || 'ব্রাঞ্চ নেই'}</div>
-        <div class="history-acc">A/C: ${item.acc} ${item.routing ? `| RT: <strong>${item.routing}</strong>` : ''}</div>
+    _0xa8df6a['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']('hidden');
+    _0xd2fe7a['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']('hidden');
+    _0xd2fe7a['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'] = '';
+    _0xg9e3ae['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](item => {
+      var _0x3cc = (168638 ^ 168634) + (941986 ^ 941986);
+      const _0xc787b = document['\u0063\u0072\u0065\u0061\u0074\u0065\u0045\u006C\u0065\u006D\u0065\u006E\u0074']('div');
+      _0x3cc = 606444 ^ 606444;
+      _0xc787b['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065'] = "\u0068\u0069\u0073\u0074\u006F\u0072\u0079\u002D\u0063\u0061\u0072\u0064";
+      _0xc787b['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'] = `
+        <div class="history-time">🕒 ${item['\u0074\u0069\u006D\u0065']}</div>
+        <div class="history-name">${item['\u006E\u0061\u006D\u0065'] || "\u09A8\u09BE\u09AE\u0020\u09A8\u09C7\u0987"}</div>
+        <div class="history-bank">${item['\u0062\u0061\u006E\u006B']} • ${item['\u0062\u0072\u0061\u006E\u0063\u0068'] || "\u09AC\u09CD\u09B0\u09BE\u099E\u09CD\u099A\u0020\u09A8\u09C7\u0987"}</div>
+        <div class="history-acc">A/C: ${item['\u0061\u0063\u0063']} ${item['\u0072\u006F\u0075\u0074\u0069\u006E\u0067'] ? `| RT: <strong>${item['\u0072\u006F\u0075\u0074\u0069\u006E\u0067']}</strong>` : ''}</div>
         <div class="history-actions">
           <button class="btn btn-secondary btn-sm load-hist-btn">পুনরায় লোড</button>
           <button class="btn btn-primary btn-sm copy-hist-btn">কপি করুন</button>
         </div>
       `;
-
-      card.querySelector('.load-hist-btn').addEventListener('click', () => {
-        fieldName.value = item.name;
-        fieldBank.value = item.bank;
-        fieldAcc.value = item.acc;
-        fieldBranch.value = item.branch;
-        fieldRouting.value = item.routing;
-        updateRoutingCard(item.routing, 'হিস্টোরি থেকে');
-        emptyState.classList.add('hidden');
-        resultView.classList.remove('hidden');
-        document.getElementById('tab-btn-parser').click();
-        showToast('হিস্টোরি থেকে লোড করা হয়েছে');
+      _0xc787b['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("\u002E\u006C\u006F\u0061\u0064\u002D\u0068\u0069\u0073\u0074\u002D\u0062\u0074\u006E")['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u006C\u0069\u0063\u006B", () => {
+        _0x0cb['\u0076\u0061\u006C\u0075\u0065'] = item['\u006E\u0061\u006D\u0065'];
+        _0xdba9cg['\u0076\u0061\u006C\u0075\u0065'] = item['\u0062\u0061\u006E\u006B'];
+        _0x5_0x46e['\u0076\u0061\u006C\u0075\u0065'] = item['\u0061\u0063\u0063'];
+        _0x455f['\u0076\u0061\u006C\u0075\u0065'] = item['\u0062\u0072\u0061\u006E\u0063\u0068'];
+        _0xa393be['\u0076\u0061\u006C\u0075\u0065'] = item['\u0072\u006F\u0075\u0074\u0069\u006E\u0067'];
+        _0x8219g(item['\u0072\u006F\u0075\u0074\u0069\u006E\u0067'], "\u09B9\u09BF\u09B8\u09CD\u099F\u09CB\u09B0\u09BF\u0020\u09A5\u09C7\u0995\u09C7");
+        _0x24d8ce['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']('hidden');
+        _0x56g8g['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']("\u0068\u0069\u0064\u0064\u0065\u006E");
+        document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0074\u0061\u0062\u002D\u0062\u0074\u006E\u002D\u0070\u0061\u0072\u0073\u0065\u0072")['\u0063\u006C\u0069\u0063\u006B']();
+        _0xc3ae("\u09B9\u09BF\u09B8\u09CD\u099F\u09CB\u09B0\u09BF\u0020\u09A5\u09C7\u0995\u09C7\u0020\u09B2\u09CB\u09A1\u0020\u0995\u09B0\u09BE\u0020\u09B9\u09AF\u09BC\u09C7\u099B\u09C7");
       });
-
-      card.querySelector('.copy-hist-btn').addEventListener('click', () => {
-        const text = `Beneficiary Name: ${item.name}\nBank: ${item.bank}\nAccount: ${item.acc}\nBranch: ${item.branch}\nRouting: ${item.routing}`;
-        copyToClipboard(text, 'হিস্টোরি আইটেম কপি হয়েছে! ✓');
+      _0xc787b['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("\u002E\u0063\u006F\u0070\u0079\u002D\u0068\u0069\u0073\u0074\u002D\u0062\u0074\u006E")['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u006C\u0069\u0063\u006B", () => {
+        const _0x25_0x4af = `Beneficiary Name: ${item['\u006E\u0061\u006D\u0065']}\nBank: ${item['\u0062\u0061\u006E\u006B']}\nAccount: ${item['\u0061\u0063\u0063']}\nBranch: ${item['\u0062\u0072\u0061\u006E\u0063\u0068']}\nRouting: ${item['\u0072\u006F\u0075\u0074\u0069\u006E\u0067']}`;
+        _0xf_0xb66(_0x25_0x4af, "\u09B9\u09BF\u09B8\u09CD\u099F\u09CB\u09B0\u09BF\u0020\u0986\u0987\u099F\u09C7\u09AE\u0020\u0995\u09AA\u09BF\u0020\u09B9\u09AF\u09BC\u09C7\u099B\u09C7\u0021\u0020\u2713");
       });
-
-      historyList.appendChild(card);
+      _0xd2fe7a['\u0061\u0070\u0070\u0065\u006E\u0064\u0043\u0068\u0069\u006C\u0064'](_0xc787b);
     });
   }
-
-  // --- SEARCH TAB ---
-  function populateSearchFilters() {
-    if (!banksDb.length) return;
-
-    searchBankSelect.innerHTML = '<option value="">-- সকল ব্যাংক (৬৩টি প্রতিষ্ঠান) --</option>';
-    const sortedBanks = [...banksDb].sort((a, b) => a.n.localeCompare(b.n));
-    sortedBanks.forEach(b => {
-      const opt = document.createElement('option');
-      opt.value = b.c;
-      opt.textContent = `${b.n} (${b.b ? b.b.length : 0} ব্রাঞ্চ)`;
-      searchBankSelect.appendChild(opt);
+  function _0x0f9a8e() {
+    if (!_0x1c886d['\u006C\u0065\u006E\u0067\u0074\u0068']) return;
+    _0xg8bbbd['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'] = "\u003C\u006F\u0070\u0074\u0069\u006F\u006E\u0020\u0076\u0061\u006C\u0075\u0065\u003D\u0022\u0022\u003E\u002D\u002D\u0020\u09B8\u0995\u09B2\u0020\u09AC\u09CD\u09AF\u09BE\u0982\u0995\u0020\u0028\u09EC\u09E9\u099F\u09BF\u0020\u09AA\u09CD\u09B0\u09A4\u09BF\u09B7\u09CD\u09A0\u09BE\u09A8\u0029\u0020\u002D\u002D\u003C\u002F\u006F\u0070\u0074\u0069\u006F\u006E\u003E";
+    let _0x27536c;
+    const _0x96f = [..._0x1c886d]['\u0073\u006F\u0072\u0074']((a, b) => a['\u006E']['\u006C\u006F\u0063\u0061\u006C\u0065\u0043\u006F\u006D\u0070\u0061\u0072\u0065'](b['\u006E']));
+    _0x27536c = '\u006E\u006A\u006B\u006F\u0071\u006F';
+    _0x96f['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](b => {
+      let _0x8e24a;
+      const opt = document['\u0063\u0072\u0065\u0061\u0074\u0065\u0045\u006C\u0065\u006D\u0065\u006E\u0074']('option');
+      _0x8e24a = "hbfial";
+      opt['\u0076\u0061\u006C\u0075\u0065'] = b['\u0063'];
+      opt['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = `${b['\u006E']} (${b['\u0062'] ? b['\u0062']['\u006C\u0065\u006E\u0067\u0074\u0068'] : 512410 ^ 512410} ব্রাঞ্চ)`;
+      _0xg8bbbd['\u0061\u0070\u0070\u0065\u006E\u0064\u0043\u0068\u0069\u006C\u0064'](opt);
     });
-
-    const districtSet = new Set();
-    banksDb.forEach(b => {
-      b.b.forEach(br => {
-        if (br[2]) districtSet.add(br[2]);
+    const _0x8c1a = new Set();
+    _0x1c886d['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](b => {
+      b['\u0062']['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](br => {
+        if (br[631322 ^ 631320]) _0x8c1a['\u0061\u0064\u0064'](br[417868 ^ 417870]);
       });
     });
-
-    const sortedDistricts = Array.from(districtSet).sort();
-    searchDistrictSelect.innerHTML = '<option value="">-- সকল জেলা (৬৪টি জেলা) --</option>';
-    sortedDistricts.forEach(d => {
-      const opt = document.createElement('option');
-      opt.value = d;
-      opt.textContent = d;
-      searchDistrictSelect.appendChild(opt);
+    const _0xa5c5e = Array['\u0066\u0072\u006F\u006D'](_0x8c1a)['\u0073\u006F\u0072\u0074']();
+    _0x7c76d['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'] = "\u003C\u006F\u0070\u0074\u0069\u006F\u006E\u0020\u0076\u0061\u006C\u0075\u0065\u003D\u0022\u0022\u003E\u002D\u002D\u0020\u09B8\u0995\u09B2\u0020\u099C\u09C7\u09B2\u09BE\u0020\u0028\u09EC\u09EA\u099F\u09BF\u0020\u099C\u09C7\u09B2\u09BE\u0029\u0020\u002D\u002D\u003C\u002F\u006F\u0070\u0074\u0069\u006F\u006E\u003E";
+    _0xa5c5e['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](d => {
+      const opt = document['\u0063\u0072\u0065\u0061\u0074\u0065\u0045\u006C\u0065\u006D\u0065\u006E\u0074']("\u006F\u0070\u0074\u0069\u006F\u006E");
+      opt['\u0076\u0061\u006C\u0075\u0065'] = d;
+      opt['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = d;
+      _0x7c76d['\u0061\u0070\u0070\u0065\u006E\u0064\u0043\u0068\u0069\u006C\u0064'](opt);
     });
   }
-
-  function renderSearchTable() {
-    const selectedBankCode = searchBankSelect.value;
-    const selectedDistrict = searchDistrictSelect.value;
-    const query = searchQueryInput.value.trim().toLowerCase();
-
-    let matches = [];
-    const maxResults = 100;
-
-    for (const b of banksDb) {
-      if (selectedBankCode && b.c !== selectedBankCode) continue;
-
-      for (const br of b.b) {
-        const [routing, brName, district, aliases] = br;
-        if (selectedDistrict && district !== selectedDistrict) continue;
-
-        if (query) {
-          const matchRouting = routing.includes(query);
-          const matchName = brName.toLowerCase().includes(query);
-          const matchDist = (district || '').toLowerCase().includes(query);
-          const matchAlias = (aliases || []).some(a => a.toLowerCase().includes(query));
-
-          let matchFuzzy = false;
-          if (!matchRouting && !matchName && !matchDist && !matchAlias) {
-            const qPhone = toPhonetic(query);
-            const bPhone = toPhonetic(brName);
-            if (bPhone.includes(qPhone) || qPhone.includes(bPhone) || stringSimilarity(bPhone, qPhone) >= 0.68) {
-              matchFuzzy = true;
+  function _0x2591da() {
+    var _0x9684ee = (847998 ^ 847990) + (101679 ^ 101679);
+    const _0x16_0xea3 = _0xg8bbbd['\u0076\u0061\u006C\u0075\u0065'];
+    _0x9684ee = "bhchke";
+    let _0x031b;
+    const _0xb9e49f = _0x7c76d['\u0076\u0061\u006C\u0075\u0065'];
+    _0x031b = (143101 ^ 143093) + (734050 ^ 734053);
+    let _0x342gc;
+    const _0x51896c = _0x31bbf['\u0076\u0061\u006C\u0075\u0065']['\u0074\u0072\u0069\u006D']()['\u0074\u006F\u004C\u006F\u0077\u0065\u0072\u0043\u0061\u0073\u0065']();
+    _0x342gc = '\u0063\u006E\u0066\u0065\u0068\u0070';
+    let _0xbed = [];
+    var _0x14g06a = (720383 ^ 720376) + (578735 ^ 578735);
+    const _0x19d8ea = 391702 ^ 391794;
+    _0x14g06a = (161908 ^ 161904) + (109627 ^ 109629);
+    for (const b of _0x1c886d) {
+      if (_0x16_0xea3 && b['\u0063'] !== _0x16_0xea3) continue;
+      for (const _0x9be6cc of b['\u0062']) {
+        const [routing, brName, district, aliases] = _0x9be6cc;
+        if (_0xb9e49f && district !== _0xb9e49f) continue;
+        if (_0x51896c) {
+          var _0x85e4b = (399258 ^ 399263) + (442611 ^ 442609);
+          const _0xg514b = routing['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](_0x51896c);
+          _0x85e4b = 107876 ^ 107873;
+          const _0x56ae = brName['\u0074\u006F\u004C\u006F\u0077\u0065\u0072\u0043\u0061\u0073\u0065']()['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](_0x51896c);
+          const _0x5dgd = (district || '')['\u0074\u006F\u004C\u006F\u0077\u0065\u0072\u0043\u0061\u0073\u0065']()['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](_0x51896c);
+          let _0x2a_0x339;
+          const _0x7a_0xaf0 = (aliases || [])['\u0073\u006F\u006D\u0065'](a => a['\u0074\u006F\u004C\u006F\u0077\u0065\u0072\u0043\u0061\u0073\u0065']()['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](_0x51896c));
+          _0x2a_0x339 = (628182 ^ 628190) + (602451 ^ 602455);
+          let _0x419fcf = false;
+          if (!_0xg514b && !_0x56ae && !_0x5dgd && !_0x7a_0xaf0) {
+            var _0xe8bg5c = (515034 ^ 515026) + (501457 ^ 501457);
+            const _0x709c = _0xe7b(_0x51896c);
+            _0xe8bg5c = 924923 ^ 924915;
+            const _0x1289b = _0xe7b(brName);
+            if (_0x1289b['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](_0x709c) || _0x709c['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](_0x1289b) || _0x6a12c(_0x1289b, _0x709c) >= 0.68) {
+              _0x419fcf = !![];
             }
           }
-
-          if (!matchRouting && !matchName && !matchDist && !matchAlias && !matchFuzzy) continue;
+          if (!_0xg514b && !_0x56ae && !_0x5dgd && !_0x7a_0xaf0 && !_0x419fcf) continue;
         }
-
-        matches.push({
-          bankName: b.n,
-          branchName: brName,
-          routing: routing,
-          district: district || 'N/A'
+        _0xbed['\u0070\u0075\u0073\u0068']({
+          '\u0062\u0061\u006E\u006B\u004E\u0061\u006D\u0065': b['\u006E'],
+          '\u0062\u0072\u0061\u006E\u0063\u0068\u004E\u0061\u006D\u0065': brName,
+          "routing": routing,
+          '\u0064\u0069\u0073\u0074\u0072\u0069\u0063\u0074': district || "\u004E\u002F\u0041"
         });
-
-        if (matches.length >= maxResults) break;
+        if (_0xbed['\u006C\u0065\u006E\u0067\u0074\u0068'] >= _0x19d8ea) break;
       }
-      if (matches.length >= maxResults) break;
+      if (_0xbed['\u006C\u0065\u006E\u0067\u0074\u0068'] >= _0x19d8ea) break;
     }
-
-    searchResultsCount.textContent = `মোট প্রদর্শিত ফলাফল: ${matches.length}টি ${matches.length >= maxResults ? '(শীর্ষ ১০০টি দেখানো হচ্ছে)' : ''}`;
-
-    branchesTableBody.innerHTML = '';
-    if (matches.length === 0) {
-      branchesTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 2rem;">কোনো ব্রাঞ্চ বা রাউটিং নম্বর পাওয়া যায়নি</td></tr>';
+    _0x3cbfb['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = `মোট প্রদর্শিত ফলাফল: ${_0xbed['\u006C\u0065\u006E\u0067\u0074\u0068']}টি ${_0xbed['\u006C\u0065\u006E\u0067\u0074\u0068'] >= _0x19d8ea ? "\u0028\u09B6\u09C0\u09B0\u09CD\u09B7\u0020\u09E7\u09E6\u09E6\u099F\u09BF\u0020\u09A6\u09C7\u0996\u09BE\u09A8\u09CB\u0020\u09B9\u099A\u09CD\u099B\u09C7\u0029" : ''}`;
+    _0x9781ff['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'] = '';
+    if (_0xbed['\u006C\u0065\u006E\u0067\u0074\u0068'] === (576059 ^ 576059)) {
+      _0x9781ff['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'] = "\u003C\u0074\u0072\u003E\u003C\u0074\u0064\u0020\u0063\u006F\u006C\u0073\u0070\u0061\u006E\u003D\u0022\u0035\u0022\u0020\u0073\u0074\u0079\u006C\u0065\u003D\u0022\u0074\u0065\u0078\u0074\u002D\u0061\u006C\u0069\u0067\u006E\u003A\u0063\u0065\u006E\u0074\u0065\u0072\u003B\u0020\u0070\u0061\u0064\u0064\u0069\u006E\u0067\u003A\u0020\u0032\u0072\u0065\u006D\u003B\u0022\u003E\u0995\u09CB\u09A8\u09CB\u0020\u09AC\u09CD\u09B0\u09BE\u099E\u09CD\u099A\u0020\u09AC\u09BE\u0020\u09B0\u09BE\u0989\u099F\u09BF\u0982\u0020\u09A8\u09AE\u09CD\u09AC\u09B0\u0020\u09AA\u09BE\u0993\u09DF\u09BE\u0020\u09AF\u09BE\u09DF\u09A8\u09BF\u003C\u002F\u0074\u0064\u003E\u003C\u002F\u0074\u0072\u003E";
       return;
     }
-
-    matches.forEach(m => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td class="routing-cell">${m.routing}</td>
-        <td>${m.bankName}</td>
-        <td>${m.branchName}</td>
-        <td>${m.district}</td>
+    _0xbed['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](m => {
+      var _0x27e65e = (471508 ^ 471510) + (344393 ^ 344398);
+      const _0xcaef1b = document['\u0063\u0072\u0065\u0061\u0074\u0065\u0045\u006C\u0065\u006D\u0065\u006E\u0074']('tr');
+      _0x27e65e = (417364 ^ 417360) + (407169 ^ 407173);
+      _0xcaef1b['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'] = `
+        <td class="routing-cell">${m['\u0072\u006F\u0075\u0074\u0069\u006E\u0067']}</td>
+        <td>${m['\u0062\u0061\u006E\u006B\u004E\u0061\u006D\u0065']}</td>
+        <td>${m['\u0062\u0072\u0061\u006E\u0063\u0068\u004E\u0061\u006D\u0065']}</td>
+        <td>${m['\u0064\u0069\u0073\u0074\u0072\u0069\u0063\u0074']}</td>
         <td>
-          <button class="btn btn-secondary btn-sm copy-table-routing-btn" data-routing="${m.routing}">
+          <button class="btn btn-secondary btn-sm copy-table-routing-btn" data-routing="${m['\u0072\u006F\u0075\u0074\u0069\u006E\u0067']}">
             কপি
           </button>
         </td>
       `;
-
-      tr.querySelector('.copy-table-routing-btn').addEventListener('click', (e) => {
-        const btn = e.currentTarget;
-        copyToClipboard(m.routing, `রাউটিং নম্বর ${m.routing} কপি হয়েছে! ✓`).then(() => {
-          attachCopyFeedback(btn);
+      _0xcaef1b['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("\u002E\u0063\u006F\u0070\u0079\u002D\u0074\u0061\u0062\u006C\u0065\u002D\u0072\u006F\u0075\u0074\u0069\u006E\u0067\u002D\u0062\u0074\u006E")['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']('click', e => {
+        var _0xb2_0xf27 = (236251 ^ 236252) + (699491 ^ 699498);
+        const _0x7fe = e['\u0063\u0075\u0072\u0072\u0065\u006E\u0074\u0054\u0061\u0072\u0067\u0065\u0074'];
+        _0xb2_0xf27 = '\u0063\u0069\u006F\u006A\u006E\u0070';
+        _0xf_0xb66(m['\u0072\u006F\u0075\u0074\u0069\u006E\u0067'], `রাউটিং নম্বর ${m['\u0072\u006F\u0075\u0074\u0069\u006E\u0067']} কপি হয়েছে! ✓`)['\u0074\u0068\u0065\u006E'](() => {
+          _0xa87b9c(_0x7fe);
         });
       });
-
-      branchesTableBody.appendChild(tr);
+      _0x9781ff['\u0061\u0070\u0070\u0065\u006E\u0064\u0043\u0068\u0069\u006C\u0064'](_0xcaef1b);
     });
   }
-
-  // --- EVENT LISTENERS ---
-  function initEventListeners() {
-    // Theme toggle
-    themeToggle.addEventListener('click', toggleTheme);
-
-    // AI Modal Triggers
-    btnOpenAiSettings.addEventListener('click', openAiModal);
-    btnCloseAiModal.addEventListener('click', closeAiModal);
-    btnCancelAiModal.addEventListener('click', closeAiModal);
-    btnSaveApiKey.addEventListener('click', saveAiSettings);
-    btnRemoveApiKey.addEventListener('click', removeAiKey);
-
-    aiModal.addEventListener('click', (e) => {
-      if (e.target === aiModal) closeAiModal();
+  function _0xc9db8e() {
+    _0x6cdb2d['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u006C\u0069\u0063\u006B", _0xf6d7f);
+    _0xa6e2aa['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u006C\u0069\u0063\u006B", _0x496c1b);
+    _0x919df['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']('click', _0xf083d);
+    _0x7_0xefa['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u006C\u0069\u0063\u006B", _0xf083d);
+    _0x9a18d['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u006C\u0069\u0063\u006B", _0xa1f69f);
+    _0xf2776f['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']('click', _0x5bf);
+    _0x48d1g['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u006C\u0069\u0063\u006B", e => {
+      if (e['\u0074\u0061\u0072\u0067\u0065\u0074'] === _0x48d1g) _0xf083d();
     });
-
-    aiKeyToggleVisibility.addEventListener('click', () => {
-      if (aiApiKeyInput.type === 'password') {
-        aiApiKeyInput.type = 'text';
-        aiKeyToggleVisibility.textContent = '🔒';
+    _0x4518gb['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']('click', () => {
+      if (_0x1d29e['\u0074\u0079\u0070\u0065'] === "\u0070\u0061\u0073\u0073\u0077\u006F\u0072\u0064") {
+        _0x1d29e['\u0074\u0079\u0070\u0065'] = "\u0074\u0065\u0078\u0074";
+        _0x4518gb['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = '🔒';
       } else {
-        aiApiKeyInput.type = 'password';
-        aiKeyToggleVisibility.textContent = '👁️';
+        _0x1d29e['\u0074\u0079\u0070\u0065'] = 'password';
+        _0x4518gb['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = '👁️';
       }
     });
-
-    // Tab buttons
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        btn.classList.add('active');
-        const targetTab = document.getElementById(btn.getAttribute('data-tab'));
-        if (targetTab) targetTab.classList.add('active');
+    document['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("\u002E\u0074\u0061\u0062\u002D\u0062\u0074\u006E")['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](btn => {
+      btn['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u006C\u0069\u0063\u006B", () => {
+        document['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']('.tab-btn')['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](b => b['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']('active'));
+        document['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("\u002E\u0074\u0061\u0062\u002D\u0063\u006F\u006E\u0074\u0065\u006E\u0074")['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](c => c['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']("\u0061\u0063\u0074\u0069\u0076\u0065"));
+        btn['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']("\u0061\u0063\u0074\u0069\u0076\u0065");
+        var _0xe62fde = (932170 ^ 932174) + (111476 ^ 111474);
+        const _0x29e6d = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064'](btn['\u0067\u0065\u0074\u0041\u0074\u0074\u0072\u0069\u0062\u0075\u0074\u0065']("\u0064\u0061\u0074\u0061\u002D\u0074\u0061\u0062"));
+        _0xe62fde = '\u006A\u0061\u006A\u0070\u0070\u0065';
+        if (_0x29e6d) _0x29e6d['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']('active');
       });
     });
-
-    // Standard Parse button (Offline)
-    btnParse.addEventListener('click', () => {
-      const text = rawInput.value;
-      if (!text || !text.trim()) {
-        showToast('অনুগ্রহ করে মেসেজ পেস্ট করুন!', 'error');
+    _0xa7a46e['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u006C\u0069\u0063\u006B", () => {
+      const text = _0x5b6c0b['\u0076\u0061\u006C\u0075\u0065'];
+      if (!text || !text['\u0074\u0072\u0069\u006D']()) {
+        _0xc3ae("\u0985\u09A8\u09C1\u0997\u09CD\u09B0\u09B9\u0020\u0995\u09B0\u09C7\u0020\u09AE\u09C7\u09B8\u09C7\u099C\u0020\u09AA\u09C7\u09B8\u09CD\u099F\u0020\u0995\u09B0\u09C1\u09A8\u0021", "\u0065\u0072\u0072\u006F\u0072");
         return;
       }
-      const res = parseMessageOffline(text);
-      displayParsedResult(res);
-      if (res) showToast('মেসেজ সফলভাবে পার্স করা হয়েছে! ✓');
+      let _0xad_0xbe1;
+      const res = _0x1a012f(text);
+      _0xad_0xbe1 = (814307 ^ 814308) + (180172 ^ 180173);
+      _0x3123f(res);
+      if (res) _0xc3ae("\u09AE\u09C7\u09B8\u09C7\u099C\u0020\u09B8\u09AB\u09B2\u09AD\u09BE\u09AC\u09C7\u0020\u09AA\u09BE\u09B0\u09CD\u09B8\u0020\u0995\u09B0\u09BE\u0020\u09B9\u09AF\u09BC\u09C7\u099B\u09C7\u0021\u0020\u2713");
     });
-
-    // Gemini AI Parse button
-    btnParseAi.addEventListener('click', async () => {
-      const text = rawInput.value;
-      if (!text || !text.trim()) {
-        showToast('অনুগ্রহ করে মেসেজ পেস্ট করুন!', 'error');
+    _0xf3f95b['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u006C\u0069\u0063\u006B", async () => {
+      const text = _0x5b6c0b['\u0076\u0061\u006C\u0075\u0065'];
+      if (!text || !text['\u0074\u0072\u0069\u006D']()) {
+        _0xc3ae('অনুগ্রহ করে মেসেজ পেস্ট করুন!', 'error');
         return;
       }
-
-      if (!geminiApiKey) {
-        openAiModal();
-        showToast('Gemini AI দিয়ে পার্স করতে প্রথমে ফ্রি API Key দিন', 'error');
+      if (!_0xcde) {
+        _0x496c1b();
+        _0xc3ae("\u0047\u0065\u006D\u0069\u006E\u0069\u0020\u0041\u0049\u0020\u09A6\u09BF\u09DF\u09C7\u0020\u09AA\u09BE\u09B0\u09CD\u09B8\u0020\u0995\u09B0\u09A4\u09C7\u0020\u09AA\u09CD\u09B0\u09A5\u09AE\u09C7\u0020\u09AB\u09CD\u09B0\u09BF\u0020\u0041\u0050\u0049\u0020\u004B\u0065\u0079\u0020\u09A6\u09BF\u09A8", "\u0065\u0072\u0072\u006F\u0072");
         return;
       }
-
-      btnParseAi.classList.add('loading');
-      btnParseAi.disabled = true;
-      const originalText = btnParseAi.innerHTML;
-      btnParseAi.innerHTML = `<span>⏳ AI বিশ্লেষণ করছে...</span>`;
-
+      _0xf3f95b['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']("\u006C\u006F\u0061\u0064\u0069\u006E\u0067");
+      _0xf3f95b['\u0064\u0069\u0073\u0061\u0062\u006C\u0065\u0064'] = !![];
+      const _0xgdeb4a = _0xf3f95b['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'];
+      _0xf3f95b['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'] = `<span>⏳ AI বিশ্লেষণ করছে...</span>`;
       try {
-        const res = await parseWithGeminiAI(text);
+        const res = await _0x32g23a(text);
         if (res) {
-          displayParsedResult(res);
-          showToast('✨ Gemini AI সফলভাবে তথ্য বের করেছে! ✓');
+          _0x3123f(res);
+          _0xc3ae('✨ Gemini AI সফলভাবে তথ্য বের করেছে! ✓');
         }
       } catch (err) {
-        showToast(`AI পার্স ত্রুটি: ${err.message}. সাধারণ পার্সার চালানো হচ্ছে...`, 'error');
-        // Fallback to offline parser
-        const fallbackRes = parseMessageOffline(text);
-        displayParsedResult(fallbackRes);
+        _0xc3ae(`AI পার্স ত্রুটি: ${err['\u006D\u0065\u0073\u0073\u0061\u0067\u0065']}. সাধারণ পার্সার চালানো হচ্ছে...`, "\u0065\u0072\u0072\u006F\u0072");
+        let _0x78306g;
+        const _0xd070d = _0x1a012f(text);
+        _0x78306g = (308406 ^ 308414) + (720415 ^ 720414);
+        _0x3123f(_0xd070d);
       } finally {
-        btnParseAi.classList.remove('loading');
-        btnParseAi.disabled = false;
-        btnParseAi.innerHTML = originalText;
+        _0xf3f95b['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']("\u006C\u006F\u0061\u0064\u0069\u006E\u0067");
+        _0xf3f95b['\u0064\u0069\u0073\u0061\u0062\u006C\u0065\u0064'] = false;
+        _0xf3f95b['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'] = _0xgdeb4a;
       }
     });
-
-    // Keyboard shortcut (Ctrl + Enter)
-    rawInput.addEventListener('keydown', (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        e.preventDefault();
-        if (geminiAutoUse && geminiApiKey) {
-          btnParseAi.click();
+    _0x5b6c0b['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u006B\u0065\u0079\u0064\u006F\u0077\u006E", e => {
+      if ((e['\u0063\u0074\u0072\u006C\u004B\u0065\u0079'] || e['\u006D\u0065\u0074\u0061\u004B\u0065\u0079']) && e['\u006B\u0065\u0079'] === "\u0045\u006E\u0074\u0065\u0072") {
+        e['\u0070\u0072\u0065\u0076\u0065\u006E\u0074\u0044\u0065\u0066\u0061\u0075\u006C\u0074']();
+        if (_0x86a1c && _0xcde) {
+          _0xf3f95b['\u0063\u006C\u0069\u0063\u006B']();
         } else {
-          btnParse.click();
+          _0xa7a46e['\u0063\u006C\u0069\u0063\u006B']();
         }
       }
     });
-
-    // Input stats & auto-parse
-    rawInput.addEventListener('input', () => {
-      const text = rawInput.value;
-      const charCount = text.length;
-      const lineCount = text ? text.split(/\r?\n/).length : 0;
-      inputStats.textContent = `${charCount.toLocaleString('bn-BD')} অক্ষর • ${lineCount.toLocaleString('bn-BD')} লাইন`;
-
-      if (autoParseEnabled && text.trim().length > 10) {
-        clearTimeout(rawInput._parseTimer);
-        rawInput._parseTimer = setTimeout(() => {
-          if (geminiAutoUse && geminiApiKey) {
-            btnParseAi.click();
+    _0x5b6c0b['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0069\u006E\u0070\u0075\u0074", () => {
+      var _0x5a22bf = (443672 ^ 443679) + (904458 ^ 904451);
+      const text = _0x5b6c0b['\u0076\u0061\u006C\u0075\u0065'];
+      _0x5a22bf = (866484 ^ 866486) + (629711 ^ 629702);
+      var _0x671f4f = (814874 ^ 814872) + (432756 ^ 432759);
+      const _0xc2eb4g = text['\u006C\u0065\u006E\u0067\u0074\u0068'];
+      _0x671f4f = 849127 ^ 849122;
+      const _0x9e07a = text ? text['\u0073\u0070\u006C\u0069\u0074'](new RegExp('\u005C\u0072\u003F\u005C\u006E', ""))['\u006C\u0065\u006E\u0067\u0074\u0068'] : 944699 ^ 944699;
+      _0x372cb['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = `${_0xc2eb4g['\u0074\u006F\u004C\u006F\u0063\u0061\u006C\u0065\u0053\u0074\u0072\u0069\u006E\u0067']("\u0062\u006E\u002D\u0042\u0044")} অক্ষর • ${_0x9e07a['\u0074\u006F\u004C\u006F\u0063\u0061\u006C\u0065\u0053\u0074\u0072\u0069\u006E\u0067']("\u0062\u006E\u002D\u0042\u0044")} লাইন`;
+      if (_0x65f81a && text['\u0074\u0072\u0069\u006D']()['\u006C\u0065\u006E\u0067\u0074\u0068'] > (921929 ^ 921923)) {
+        clearTimeout(_0x5b6c0b['\u005F\u0070\u0061\u0072\u0073\u0065\u0054\u0069\u006D\u0065\u0072']);
+        _0x5b6c0b['\u005F\u0070\u0061\u0072\u0073\u0065\u0054\u0069\u006D\u0065\u0072'] = setTimeout(() => {
+          if (_0x86a1c && _0xcde) {
+            _0xf3f95b['\u0063\u006C\u0069\u0063\u006B']();
           } else {
-            const res = parseMessageOffline(text);
-            displayParsedResult(res);
+            let _0xd8fddf;
+            const res = _0x1a012f(text);
+            _0xd8fddf = 906796 ^ 906788;
+            _0x3123f(res);
           }
-        }, 350);
+        }, 435890 ^ 436204);
       }
     });
-
-    autoParseToggle.addEventListener('change', (e) => {
-      autoParseEnabled = e.target.checked;
+    _0x3efc8d['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u0068\u0061\u006E\u0067\u0065", e => {
+      _0x65f81a = e['\u0074\u0061\u0072\u0067\u0065\u0074']['\u0063\u0068\u0065\u0063\u006B\u0065\u0064'];
     });
-
-    // Clear button
-    btnClear.addEventListener('click', () => {
-      rawInput.value = '';
-      rawInput.focus();
-      inputStats.textContent = '০ অক্ষর • ০ লাইন';
-      displayParsedResult(null);
-      showToast('ইনপুট পরিষ্কার করা হয়েছে');
+    _0x5bcaa['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u006C\u0069\u0063\u006B", () => {
+      _0x5b6c0b['\u0076\u0061\u006C\u0075\u0065'] = '';
+      _0x5b6c0b['\u0066\u006F\u0063\u0075\u0073']();
+      _0x372cb['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = "\u09E6\u0020\u0985\u0995\u09CD\u09B7\u09B0\u0020\u2022\u0020\u09E6\u0020\u09B2\u09BE\u0987\u09A8";
+      _0x3123f(null);
+      _0xc3ae('ইনপুট পরিষ্কার করা হয়েছে');
     });
-
-    // Paste from clipboard button
-    btnPasteClipboard.addEventListener('click', async () => {
+    _0xega77c['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']('click', async () => {
       try {
-        if (navigator.clipboard && navigator.clipboard.readText) {
-          const text = await navigator.clipboard.readText();
+        if (navigator['\u0063\u006C\u0069\u0070\u0062\u006F\u0061\u0072\u0064'] && navigator['\u0063\u006C\u0069\u0070\u0062\u006F\u0061\u0072\u0064']['\u0072\u0065\u0061\u0064\u0054\u0065\u0078\u0074']) {
+          const text = await navigator['\u0063\u006C\u0069\u0070\u0062\u006F\u0061\u0072\u0064']['\u0072\u0065\u0061\u0064\u0054\u0065\u0078\u0074']();
           if (text) {
-            rawInput.value = text;
-            rawInput.dispatchEvent(new Event('input'));
-            if (geminiAutoUse && geminiApiKey) {
-              btnParseAi.click();
+            _0x5b6c0b['\u0076\u0061\u006C\u0075\u0065'] = text;
+            _0x5b6c0b['\u0064\u0069\u0073\u0070\u0061\u0074\u0063\u0068\u0045\u0076\u0065\u006E\u0074'](new Event("\u0069\u006E\u0070\u0075\u0074"));
+            if (_0x86a1c && _0xcde) {
+              _0xf3f95b['\u0063\u006C\u0069\u0063\u006B']();
             } else {
-              btnParse.click();
+              _0xa7a46e['\u0063\u006C\u0069\u0063\u006B']();
             }
-            showToast('ক্লিপবোর্ড থেকে পেস্ট করা হয়েছে! ✓');
+            _0xc3ae("\u0995\u09CD\u09B2\u09BF\u09AA\u09AC\u09CB\u09B0\u09CD\u09A1\u0020\u09A5\u09C7\u0995\u09C7\u0020\u09AA\u09C7\u09B8\u09CD\u099F\u0020\u0995\u09B0\u09BE\u0020\u09B9\u09AF\u09BC\u09C7\u099B\u09C7\u0021\u0020\u2713");
           } else {
-            showToast('ক্লিপবোর্ডে কোনো লেখা নেই!', 'error');
+            _0xc3ae('ক্লিপবোর্ডে কোনো লেখা নেই!', "\u0065\u0072\u0072\u006F\u0072");
           }
         } else {
-          showToast('ব্রাউজারে ক্লিপবোর্ড পারমিশন দিন বা Ctrl+V চাপুন', 'error');
+          _0xc3ae("\u09AC\u09CD\u09B0\u09BE\u0989\u099C\u09BE\u09B0\u09C7\u0020\u0995\u09CD\u09B2\u09BF\u09AA\u09AC\u09CB\u09B0\u09CD\u09A1\u0020\u09AA\u09BE\u09B0\u09AE\u09BF\u09B6\u09A8\u0020\u09A6\u09BF\u09A8\u0020\u09AC\u09BE\u0020\u0043\u0074\u0072\u006C\u002B\u0056\u0020\u099A\u09BE\u09AA\u09C1\u09A8", 'error');
         }
       } catch (err) {
-        showToast('ক্লিপবোর্ড থেকে রিড করা সম্ভব হয়নি, Ctrl+V দিয়ে পেস্ট করুন', 'error');
+        _0xc3ae("\u0995\u09CD\u09B2\u09BF\u09AA\u09AC\u09CB\u09B0\u09CD\u09A1\u0020\u09A5\u09C7\u0995\u09C7\u0020\u09B0\u09BF\u09A1\u0020\u0995\u09B0\u09BE\u0020\u09B8\u09AE\u09CD\u09AD\u09AC\u0020\u09B9\u09DF\u09A8\u09BF\u002C\u0020\u0043\u0074\u0072\u006C\u002B\u0056\u0020\u09A6\u09BF\u09DF\u09C7\u0020\u09AA\u09C7\u09B8\u09CD\u099F\u0020\u0995\u09B0\u09C1\u09A8", "\u0065\u0072\u0072\u006F\u0072");
       }
     });
-
-
-
-    // Copy single fields
-    document.querySelectorAll('.btn-copy').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const targetId = btn.getAttribute('data-copy-target');
-        const targetEl = document.getElementById(targetId);
-        if (targetEl) {
-          const val = targetEl.value || targetEl.textContent;
-          copyToClipboard(val, 'কপি হয়েছে! ✓').then(() => {
-            attachCopyFeedback(btn);
+    document['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("\u002E\u0062\u0074\u006E\u002D\u0063\u006F\u0070\u0079")['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](btn => {
+      btn['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u006C\u0069\u0063\u006B", () => {
+        let _0x7e0d;
+        const _0x5d419e = btn['\u0067\u0065\u0074\u0041\u0074\u0074\u0072\u0069\u0062\u0075\u0074\u0065']("\u0064\u0061\u0074\u0061\u002D\u0063\u006F\u0070\u0079\u002D\u0074\u0061\u0072\u0067\u0065\u0074");
+        _0x7e0d = (282129 ^ 282132) + (139727 ^ 139725);
+        const _0xd2_0x6ac = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064'](_0x5d419e);
+        if (_0xd2_0x6ac) {
+          const _0x60962f = _0xd2_0x6ac['\u0076\u0061\u006C\u0075\u0065'] || _0xd2_0x6ac['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'];
+          _0xf_0xb66(_0x60962f, "\u0995\u09AA\u09BF\u0020\u09B9\u09AF\u09BC\u09C7\u099B\u09C7\u0021\u0020\u2713")['\u0074\u0068\u0065\u006E'](() => {
+            _0xa87b9c(btn);
           });
         }
       });
     });
-
-    // Copy All button
-    btnCopyAll.addEventListener('click', copyAllDetails);
-
-    // Dynamic BanksBD search link updates on field changes
-    fieldBank.addEventListener('input', () => updateBanksBdSearchLink(fieldBank.value, fieldBranch.value));
-    fieldBranch.addEventListener('input', () => updateBanksBdSearchLink(fieldBank.value, fieldBranch.value));
-
-    // Save history button
-    btnSaveHistory.addEventListener('click', saveToHistory);
-
-    // Clear history button
-    btnClearHistory.addEventListener('click', () => {
+    _0xd30fag['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u006C\u0069\u0063\u006B", _0x8b2fea);
+    _0xdba9cg['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']('input', () => _0x984d6b(_0xdba9cg['\u0076\u0061\u006C\u0075\u0065'], _0x455f['\u0076\u0061\u006C\u0075\u0065']));
+    _0x455f['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']('input', () => _0x984d6b(_0xdba9cg['\u0076\u0061\u006C\u0075\u0065'], _0x455f['\u0076\u0061\u006C\u0075\u0065']));
+    _0xde4ba['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']('click', _0xf2c54e);
+    _0x6_0xc7c['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']('click', () => {
       if (confirm('আপনি কি সমস্ত সংরক্ষিত হিস্টোরি মুছে ফেলতে চান?')) {
-        historyItems = [];
-        localStorage.removeItem(HISTORY_STORAGE_KEY);
-        renderHistory();
-        showToast('সমস্ত হিস্টোরি মুছে ফেলা হয়েছে');
+        _0xg9e3ae = [];
+        localStorage['\u0072\u0065\u006D\u006F\u0076\u0065\u0049\u0074\u0065\u006D'](_0x09f4ce);
+        _0xabe();
+        _0xc3ae('সমস্ত হিস্টোরি মুছে ফেলা হয়েছে');
       }
     });
-
-    // Search filters listeners
-    searchBankSelect.addEventListener('change', renderSearchTable);
-    searchDistrictSelect.addEventListener('change', renderSearchTable);
-    searchQueryInput.addEventListener('input', () => {
-      if (searchQueryInput.value.trim()) {
-        searchClearBtn.classList.remove('hidden');
+    _0xg8bbbd['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']('change', _0x2591da);
+    _0x7c76d['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u0068\u0061\u006E\u0067\u0065", _0x2591da);
+    _0x31bbf['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']('input', () => {
+      if (_0x31bbf['\u0076\u0061\u006C\u0075\u0065']['\u0074\u0072\u0069\u006D']()) {
+        _0x1909g['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']("\u0068\u0069\u0064\u0064\u0065\u006E");
       } else {
-        searchClearBtn.classList.add('hidden');
+        _0x1909g['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']("\u0068\u0069\u0064\u0064\u0065\u006E");
       }
-      renderSearchTable();
+      _0x2591da();
     });
-
-    searchClearBtn.addEventListener('click', () => {
-      searchQueryInput.value = '';
-      searchClearBtn.classList.add('hidden');
-      renderSearchTable();
+    _0x1909g['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']('click', () => {
+      _0x31bbf['\u0076\u0061\u006C\u0075\u0065'] = '';
+      _0x1909g['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']('hidden');
+      _0x2591da();
     });
-
-    // Re-evaluate routing when user manually edits branch
-    fieldBranch.addEventListener('input', () => {
-      if (currentParsedResult && currentParsedResult.bank) {
-        const cleanQuery = normalizeStr(fieldBranch.value)
-          .replace(/branch|শাখা/gi, '')
-          .trim();
-        const found = currentParsedResult.bank.b.find(br => {
-          return normalizeStr(br[1]).includes(cleanQuery) ||
-                 normalizeStr(br[2] || '').includes(cleanQuery);
+    _0x455f['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']('input', () => {
+      if (_0xce5d && _0xce5d['\u0062\u0061\u006E\u006B']) {
+        var _0xb5da = (164980 ^ 164976) + (191252 ^ 191255);
+        const _0x137cd = _0x53b4cb(_0x455f['\u0076\u0061\u006C\u0075\u0065'])['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp("branch|\u09B6\u09BE\u0996\u09BE", "gi"), '')['\u0074\u0072\u0069\u006D']();
+        _0xb5da = (429587 ^ 429591) + (279014 ^ 279023);
+        const _0xc6f = _0xce5d['\u0062\u0061\u006E\u006B']['\u0062']['\u0066\u0069\u006E\u0064'](br => {
+          return _0x53b4cb(br[155390 ^ 155391])['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](_0x137cd) || _0x53b4cb(br[983424 ^ 983426] || '')['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](_0x137cd);
         });
-        if (found) {
-          updateRoutingCard(found[0], 'ম্যানুয়াল এডিটেড ✓', currentParsedResult.bank.c);
-          branchDistBadge.textContent = `জেলা: ${found[2] || '---'}`;
+        if (_0xc6f) {
+          _0x8219g(_0xc6f[389717 ^ 389717], 'ম্যানুয়াল এডিটেড ✓', _0xce5d['\u0062\u0061\u006E\u006B']['\u0063']);
+          _0x59452f['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'] = `জেলা: ${_0xc6f[275899 ^ 275897] || "\u002D\u002D\u002D"}`;
         }
       }
     });
   }
-
-  // --- PWA & OFFLINE CACHE SYSTEM ---
-  function initPWA() {
-    // 1. Register Service Worker for 100% offline usage
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then((reg) => {
-            console.log('[PWA] Service Worker registered with scope:', reg.scope);
-            reg.onupdatefound = () => {
-              const installing = reg.installing;
-              if (installing) {
-                installing.onstatechange = () => {
-                  if (installing.state === 'installed' && navigator.serviceWorker.controller) {
-                    showToast('অ্যাপের নতুন আপডেট প্রস্তুত! রিলোড করুন।');
-                  }
-                };
-              }
-            };
-          })
-          .catch((err) => {
-            console.log('[PWA] SW note:', err.message);
-          });
+  function _0x2027df() {
+    if ("\u0073\u0065\u0072\u0076\u0069\u0063\u0065\u0057\u006F\u0072\u006B\u0065\u0072" in navigator) {
+      window['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u006C\u006F\u0061\u0064", () => {
+        navigator['\u0073\u0065\u0072\u0076\u0069\u0063\u0065\u0057\u006F\u0072\u006B\u0065\u0072']['\u0072\u0065\u0067\u0069\u0073\u0074\u0065\u0072']("\u002E\u002F\u0073\u0077\u002E\u006A\u0073")['\u0074\u0068\u0065\u006E'](reg => {
+          console['\u006C\u006F\u0067']("\u005B\u0050\u0057\u0041\u005D\u0020\u0053\u0065\u0072\u0076\u0069\u0063\u0065\u0020\u0057\u006F\u0072\u006B\u0065\u0072\u0020\u0072\u0065\u0067\u0069\u0073\u0074\u0065\u0072\u0065\u0064\u0020\u0077\u0069\u0074\u0068\u0020\u0073\u0063\u006F\u0070\u0065\u003A", reg['\u0073\u0063\u006F\u0070\u0065']);
+          reg['\u006F\u006E\u0075\u0070\u0064\u0061\u0074\u0065\u0066\u006F\u0075\u006E\u0064'] = () => {
+            var _0x7cb2e = (383541 ^ 383542) + (319777 ^ 319780);
+            const _0x9340a = reg['\u0069\u006E\u0073\u0074\u0061\u006C\u006C\u0069\u006E\u0067'];
+            _0x7cb2e = '\u0062\u006C\u0068\u0067\u006F\u0070';
+            if (_0x9340a) {
+              _0x9340a['\u006F\u006E\u0073\u0074\u0061\u0074\u0065\u0063\u0068\u0061\u006E\u0067\u0065'] = () => {
+                if (_0x9340a['\u0073\u0074\u0061\u0074\u0065'] === "\u0069\u006E\u0073\u0074\u0061\u006C\u006C\u0065\u0064" && navigator['\u0073\u0065\u0072\u0076\u0069\u0063\u0065\u0057\u006F\u0072\u006B\u0065\u0072']['\u0063\u006F\u006E\u0074\u0072\u006F\u006C\u006C\u0065\u0072']) {
+                  _0xc3ae('অ্যাপের নতুন আপডেট প্রস্তুত! রিলোড করুন।');
+                }
+              };
+            }
+          };
+        })['\u0063\u0061\u0074\u0063\u0068'](err => {
+          console['\u006C\u006F\u0067']("\u005B\u0050\u0057\u0041\u005D\u0020\u0053\u0057\u0020\u006E\u006F\u0074\u0065\u003A", err['\u006D\u0065\u0073\u0073\u0061\u0067\u0065']);
+        });
       });
     }
-
-    // 2. Install App prompt handling
-    let deferredInstallPrompt = null;
-    const btnInstallPwa = document.getElementById('btn-install-pwa');
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredInstallPrompt = e;
-      if (btnInstallPwa) {
-        btnInstallPwa.classList.remove('hidden');
+    let _0x2beafc = null;
+    const _0xf69f = document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']('btn-install-pwa');
+    window['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0062\u0065\u0066\u006F\u0072\u0065\u0069\u006E\u0073\u0074\u0061\u006C\u006C\u0070\u0072\u006F\u006D\u0070\u0074", e => {
+      e['\u0070\u0072\u0065\u0076\u0065\u006E\u0074\u0044\u0065\u0066\u0061\u0075\u006C\u0074']();
+      _0x2beafc = e;
+      if (_0xf69f) {
+        _0xf69f['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']("\u0068\u0069\u0064\u0064\u0065\u006E");
       }
     });
-
-    if (btnInstallPwa) {
-      btnInstallPwa.addEventListener('click', async () => {
-        if (deferredInstallPrompt) {
-          deferredInstallPrompt.prompt();
-          const { outcome } = await deferredInstallPrompt.userChoice;
+    if (_0xf69f) {
+      _0xf69f['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u006C\u0069\u0063\u006B", async () => {
+        if (_0x2beafc) {
+          _0x2beafc['\u0070\u0072\u006F\u006D\u0070\u0074']();
+          const {
+            "outcome": outcome
+          } = await _0x2beafc['\u0075\u0073\u0065\u0072\u0043\u0068\u006F\u0069\u0063\u0065'];
           if (outcome === 'accepted') {
-            showToast('অ্যাপ ইনস্টলেশন সফলভাবে শুরু হয়েছে! 🎉');
-            btnInstallPwa.classList.add('hidden');
+            _0xc3ae("\u0985\u09CD\u09AF\u09BE\u09AA\u0020\u0987\u09A8\u09B8\u09CD\u099F\u09B2\u09C7\u09B6\u09A8\u0020\u09B8\u09AB\u09B2\u09AD\u09BE\u09AC\u09C7\u0020\u09B6\u09C1\u09B0\u09C1\u0020\u09B9\u09DF\u09C7\u099B\u09C7\u0021\u0020\uD83C\uDF89");
+            _0xf69f['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']("\u0068\u0069\u0064\u0064\u0065\u006E");
           }
-          deferredInstallPrompt = null;
+          _0x2beafc = null;
         } else {
-          showToast('অ্যাপ ইনস্টল করতে আপনার ব্রাউজার মেন্যু থেকে "Add to Home screen" বা "Install" সিলেক্ট করুন।');
+          _0xc3ae('অ্যাপ ইনস্টল করতে আপনার ব্রাউজার মেন্যু থেকে "Add to Home screen" বা "Install" সিলেক্ট করুন।');
         }
       });
     }
-
-    window.addEventListener('appinstalled', () => {
-      showToast('অ্যাপটি সফলভাবে আপনার ডিভাইসে ইনস্টল করা হয়েছে! 📲');
-      if (btnInstallPwa) btnInstallPwa.classList.add('hidden');
-      deferredInstallPrompt = null;
+    window['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0061\u0070\u0070\u0069\u006E\u0073\u0074\u0061\u006C\u006C\u0065\u0064", () => {
+      _0xc3ae("\u0985\u09CD\u09AF\u09BE\u09AA\u099F\u09BF\u0020\u09B8\u09AB\u09B2\u09AD\u09BE\u09AC\u09C7\u0020\u0986\u09AA\u09A8\u09BE\u09B0\u0020\u09A1\u09BF\u09AD\u09BE\u0987\u09B8\u09C7\u0020\u0987\u09A8\u09B8\u09CD\u099F\u09B2\u0020\u0995\u09B0\u09BE\u0020\u09B9\u09DF\u09C7\u099B\u09C7\u0021\u0020\uD83D\uDCF2");
+      if (_0xf69f) _0xf69f['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']("\u0068\u0069\u0064\u0064\u0065\u006E");
+      _0x2beafc = null;
     });
-
-    // 3. Network status updates
-    window.addEventListener('online', () => {
-      showToast('ইন্টারনেট সংযোগ চালু হয়েছে! 🌐');
+    window['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']('online', () => {
+      _0xc3ae('ইন্টারনেট সংযোগ চালু হয়েছে! 🌐');
     });
-    window.addEventListener('offline', () => {
-      showToast('অফলাইন মোড সক্রিয় — ক্যাশ থেকে ১০০% কাজ করবে! ⚡');
+    window['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u006F\u0066\u0066\u006C\u0069\u006E\u0065", () => {
+      _0xc3ae("\u0985\u09AB\u09B2\u09BE\u0987\u09A8\u0020\u09AE\u09CB\u09A1\u0020\u09B8\u0995\u09CD\u09B0\u09BF\u09DF\u0020\u2014\u0020\u0995\u09CD\u09AF\u09BE\u09B6\u0020\u09A5\u09C7\u0995\u09C7\u0020\u09E7\u09E6\u09E6\u0025\u0020\u0995\u09BE\u099C\u0020\u0995\u09B0\u09AC\u09C7\u0021\u0020\u26A1");
     });
   }
-
-  // Run initialization
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+  if (document['\u0072\u0065\u0061\u0064\u0079\u0053\u0074\u0061\u0074\u0065'] === "\u006C\u006F\u0061\u0064\u0069\u006E\u0067") {
+    document['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']('DOMContentLoaded', _0x68fbc);
   } else {
-    init();
+    _0x68fbc();
   }
-
 })();
